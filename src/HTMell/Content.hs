@@ -13,3 +13,6 @@ relPath (Node d p _) = makeRelative d p
 
 pathParts :: Node -> [FilePath]
 pathParts node = map dropTrailingPathSeparator $ splitPath $ relPath node
+
+baseName :: Node -> FilePath
+baseName node = last $ pathParts node
