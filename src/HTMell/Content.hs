@@ -4,9 +4,9 @@ import System.FilePath
 import Text.Regex.PCRE
 
 data Node = Node {
-        dir     :: FilePath,
-        path    :: FilePath,
-        home    :: String
+    dir     :: FilePath,
+    path    :: FilePath,
+    home    :: String
 } deriving (Show, Eq)
 
 relPath :: Node -> FilePath
