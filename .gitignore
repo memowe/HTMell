@@ -1,2 +1,7 @@
 # vim swap files
 *.sw[a-p]
+
+# cabal sandbox
+.cabal-sandbox
+cabal.sandbox.config
+dist
