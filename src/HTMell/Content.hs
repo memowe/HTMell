@@ -16,3 +16,6 @@ pathParts node = map dropTrailingPathSeparator $ splitPath $ relPath node
 
 baseName :: Node -> FilePath
 baseName node = last $ pathParts node
+
+-- Example data
+nod = Node "foo/bar" "foo/bar/baz/42_quux.md" "homie"
