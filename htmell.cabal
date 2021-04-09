@@ -1,10 +1,10 @@
 name:                HTMell
 version:             0.1.0.0
+synopsis:            Markdown content from file system
+homepage:            https://github.com/memowe/HTMell
 license:             MIT
 license-file:        LICENSE
 author:              Mirko Westermeier
-maintainer:          mirko@westermeier.de
-category:            Web
 build-type:          Simple
 cabal-version:       >=1.10
 
