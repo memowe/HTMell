@@ -14,6 +14,8 @@ showOK = show path == pathStr
 eqOK =  path == htpath "foo/bar/baz"
     &&  path /= htpath "foo/baz"
 
+normalizeOK = htpath "a/../b/c/../../foo/bar/d/../baz" == path
+
 readOK = show parsedPath == pathStr
     where parsedPath = read pathStr :: HTPath
 
@@ -41,7 +43,14 @@ relOK = testRel ""      "a/b/c"     "a/b/c"
     &&  testRel "a/b/c" "a/b/x/y"   "../x/y"
     &&  testRel "a/b/c" "a/x/y/z"   "../../x/y/z"
 
-pathOK = showOK && eqOK && readOK && lastOK && concatOK && relOK
+pathOK
+    =   showOK
+    &&  eqOK
+    &&  normalizeOK
+    &&  readOK
+    &&  lastOK
+    &&  concatOK
+    &&  relOK
 
 main = if pathOK
     then putStrLn "OK"

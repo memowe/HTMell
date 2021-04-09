@@ -14,8 +14,17 @@ instance Show HTPath where
 instance Eq HTPath where
     p1 == p2 = show p1 == show p2
 
+_normalize :: [String] -> [String]
+_normalize = norm []
+    where
+        norm done [] = reverse done
+        norm [] (a:rest) = norm [a] rest
+        norm (x:done) (a:rest) = if a == ".." && x /= ".."
+            then norm done rest
+            else norm (a:x:done) rest
+
 htpath :: String -> HTPath
-htpath = HTPath . parts
+htpath = HTPath . _normalize . parts
     where parts = filter (/=[]) . splitOn sep
 
 instance Read HTPath where
