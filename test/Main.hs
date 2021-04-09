@@ -25,11 +25,12 @@ concatOK =  show newP1 == show newP2
         newP2 = path1 </> path2
 
 testRel :: String -> String -> String -> Bool
-testRel base path expected = relPathStr == expected
+testRel base path exp = rel == exp && b </> e == p
     where
         b = htpath base
         p = htpath path
-        relPathStr = show $ htrel b p
+        e = htpath exp
+        rel = show $ htrel b p
 
 relOK = testRel ""      "a/b/c"     "a/b/c"
     &&  testRel "a/b/c" "a/b/c/d/e" "d/e"
