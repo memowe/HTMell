@@ -19,8 +19,8 @@ lastOK = htlast (htpath "foo/bar/baz") == "baz"
 concatOK =  show newP1 == show newP2
     &&      show newP2 == "foo/bar/baz/quux/quuux"
     where
-        path1 = htpath "foo/bar/baz"
-        path2 = htpath "quux/quuux"
+        path1 = htpath "foo/bar/baz/xnulch"
+        path2 = htpath "../quux/quuux"
         newP1 = htconcat path1 path2
         newP2 = path1 </> path2
 

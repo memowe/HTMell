@@ -34,7 +34,7 @@ htlast :: HTPath -> String
 htlast (HTPath parts) = if null parts then "" else last parts
 
 htconcat :: HTPath -> HTPath -> HTPath
-htconcat (HTPath p1) (HTPath p2) = HTPath $ p1 ++ p2
+htconcat (HTPath p1) (HTPath p2) = HTPath $ _normalize (p1 ++ p2)
 (</>) = htconcat
 
 htrel :: HTPath -> HTPath -> HTPath
