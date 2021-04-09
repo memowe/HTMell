@@ -4,31 +4,25 @@ import System.Exit (exitFailure)
 import HTMell.Path (HTPath, htpath, htconcat, (</>), htlast, htrel)
 import Data.List (intercalate)
 
-sep     = "/"
-parts   = ["foo", "bar", "baz"]
-pathStr = intercalate sep parts
-path    = htpath pathStr
+showOK = show (htpath "foo/bar/baz") == "foo/bar/baz"
 
-showOK = show path == pathStr
+eqOK =  htpath "foo/bar/baz" == htpath "foo/bar/baz"
+    &&  htpath "foo/bar/baz" /= htpath "foo/baz"
 
-eqOK =  path == htpath "foo/bar/baz"
-    &&  path /= htpath "foo/baz"
+normalizeOK = htpath "a/../b/c/../../x/y/d/../z" == htpath "x/y/z"
 
-normalizeOK = htpath "a/../b/c/../../foo/bar/d/../baz" == path
+readOK = show parsedPath == "foo/bar/baz"
+    where parsedPath = read "foo/bar/baz" :: HTPath
 
-readOK = show parsedPath == pathStr
-    where parsedPath = read pathStr :: HTPath
-
-lastOK = htlast path == last parts
+lastOK = htlast (htpath "foo/bar/baz") == "baz"
 
 concatOK =  show newP1 == show newP2
-    &&      show newP2 == expStr
+    &&      show newP2 == "foo/bar/baz/quux/quuux"
     where
-        expStr  = pathStr ++ sep ++ appStr
-        appStr  = "quux" ++ sep ++ "quuux"
-        path2   = htpath appStr
-        newP1   = htconcat path path2
-        newP2   = path </> path2
+        path1 = htpath "foo/bar/baz"
+        path2 = htpath "quux/quuux"
+        newP1 = htconcat path1 path2
+        newP2 = path1 </> path2
 
 testRel :: String -> String -> String -> Bool
 testRel base path expected = relPathStr == expected
