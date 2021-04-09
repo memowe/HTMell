@@ -32,7 +32,6 @@ testRel base path expected = relPathStr == expected
         relPathStr = show $ htrel b p
 
 relOK = testRel ""      "a/b/c"     "a/b/c"
-    &&  testRel "a/b/c" ""          ""
     &&  testRel "a/b/c" "a/b/c/d/e" "d/e"
     &&  testRel "a/b/c" "a/b/x/y"   "../x/y"
     &&  testRel "a/b/c" "a/x/y/z"   "../../x/y/z"
