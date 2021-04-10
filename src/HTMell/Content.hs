@@ -12,7 +12,7 @@ data HTContent = HTContent {
     path        :: HTPath,
     metadata    :: Map String String,
     rawContent  :: String
-}
+} deriving (Show, Eq)
 
 html :: HTContent -> Html
 html htc = toHtml . markdown def . pack $ rawContent htc
