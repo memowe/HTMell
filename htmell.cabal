@@ -11,7 +11,8 @@ cabal-version:       >=1.10
 library
   exposed-modules:
     HTMell.Path,
-    HTMell.Content
+    HTMell.Content,
+    HTMell.SimpleFrontmatter
   build-depends:
     base >=4.9 && <5,
     split,
@@ -19,7 +20,8 @@ library
     text,
     bytestring,
     cheapskate,
-    blaze-html
+    blaze-html,
+    regex-tdfa
   hs-source-dirs:      src
   default-language:    Haskell2010
 
