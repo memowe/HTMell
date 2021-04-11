@@ -2,7 +2,7 @@
 
 **Markdown content from file system**
 
-[![Build Status](https://travis-ci.com/memowe/HTMell.svg?branch=main)](https://travis-ci.com/memowe/HTMell)
+[![CI status](https://github.com/memowe/HTMell/actions/workflows/haskell.yml/badge.svg)](https://github.com/memowe/HTMell/actions)
 
 ## Author and License
 
