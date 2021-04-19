@@ -1,23 +1,22 @@
 module Main where
 
 import System.Exit (exitFailure)
-import HTMell.Path (HTPath, htpath, htconcat, (</>), htlast, htrel)
+import HTMell.Path (htpath, htshow, hteq, htconcat, (</>), htrel)
 import Data.List (intercalate)
 
-showOK = show (htpath "foo/bar/baz") == "foo/bar/baz"
+constructOK = htpath "foo/bar/baz" == ["foo", "bar", "baz"]
 
-eqOK =  htpath "foo/bar/baz" == htpath "foo/bar/baz"
-    &&  htpath "foo/bar/baz" /= htpath "foo/baz"
+showOK = htshow (htpath "foo/bar/baz") == "foo/bar/baz"
+
+eqOK =  htpath "foo/bar/baz" `hteq` htpath "foo/bar/baz"
+    &&  not (htpath "foo/bar/baz" `hteq` htpath "foo/baz")
 
 normalizeOK = htpath "a/../b/c/../../x/y/d/../z" == htpath "x/y/z"
 
-readOK = show parsedPath == "foo/bar/baz"
-    where parsedPath = read "foo/bar/baz" :: HTPath
+lastOK = last (htpath "foo/bar/baz") == "baz"
 
-lastOK = htlast (htpath "foo/bar/baz") == "baz"
-
-concatOK =  show newP1 == show newP2
-    &&      show newP2 == "foo/bar/baz/quux/quuux"
+concatOK =  htshow newP1 == htshow newP2
+    &&      htshow newP2 == "foo/bar/baz/quux/quuux"
     where
         path1 = htpath "foo/bar/baz/xnulch"
         path2 = htpath "../quux/quuux"
@@ -30,7 +29,7 @@ testRel base path exp = rel == exp && b </> e == p
         b = htpath base
         p = htpath path
         e = htpath exp
-        rel = show $ htrel b p
+        rel = htshow $ htrel b p
 
 relOK = testRel ""      "a/b/c"     "a/b/c"
     &&  testRel "a/b/c" "a/b/c/d/e" "d/e"
@@ -38,10 +37,10 @@ relOK = testRel ""      "a/b/c"     "a/b/c"
     &&  testRel "a/b/c" "a/x/y/z"   "../../x/y/z"
 
 pathOK
-    =   showOK
+    =   constructOK
+    &&  showOK
     &&  eqOK
     &&  normalizeOK
-    &&  readOK
     &&  lastOK
     &&  concatOK
     &&  relOK

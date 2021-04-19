@@ -1,4 +1,4 @@
-module HTMell.Path (HTPath, htpath, htconcat, (</>), htlast, htrel) where
+module HTMell.Path (HTPath, htpath, htshow, hteq, htconcat, (</>), htrel) where
 
 import Data.List (intercalate, replicate)
 import Data.List.Split (splitOn)
@@ -6,15 +6,9 @@ import Data.List.Split (splitOn)
 sep :: String
 sep = "/"
 
-newtype HTPath = HTPath [String]
+type HTPath = [String]
 
-instance Show HTPath where
-    show (HTPath parts) = intercalate sep parts
-
-instance Eq HTPath where
-    p1 == p2 = show p1 == show p2
-
-_normalize :: [String] -> [String]
+_normalize :: HTPath -> HTPath
 _normalize = norm []
     where
         norm done [] = reverse done
@@ -24,26 +18,23 @@ _normalize = norm []
             else norm (a:x:done) rest
 
 htpath :: String -> HTPath
-htpath = HTPath . _normalize . parts
+htpath = _normalize . parts
     where parts = filter (/=[]) . splitOn sep
 
-instance Read HTPath where
-    readsPrec _ str = [(htpath str, "")]
+htshow :: HTPath -> String
+htshow = intercalate sep . _normalize
 
-htlast :: HTPath -> String
-htlast (HTPath parts) = if null parts then "" else last parts
+hteq :: HTPath -> HTPath -> Bool
+hteq p1 p2 = htshow p1 == htshow p2
 
 htconcat :: HTPath -> HTPath -> HTPath
-htconcat (HTPath p1) (HTPath p2) = HTPath $ _normalize (p1 ++ p2)
+htconcat p1 p2 = _normalize $ p1 ++ p2
 (</>) = htconcat
 
 htrel :: HTPath -> HTPath -> HTPath
-htrel (HTPath base) (HTPath path) = HTPath $ _htrel base path
-
-_htrel :: [String] -> [String] -> [String]
-_htrel [] path = path
-_htrel _  []   = []
-_htrel base@(b:bs) path@(p:ps) =
+htrel [] path   = path
+htrel _  []     = []
+htrel base@(b:bs) path@(p:ps) =
     if b == p
-        then _htrel bs ps
+        then htrel bs ps
         else replicate (length base) ".." ++ path
