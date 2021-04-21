@@ -1,4 +1,4 @@
-module HTMell.Path (HTPath, htpath, htshow, hteq, htconcat, (</>), htrel) where
+module HTMell.Path (HTPath, htpath, htpshow, htpeq, htpconcat, (</>), htprel) where
 
 import Data.List (intercalate, replicate)
 import Data.List.Split (splitOn)
@@ -21,20 +21,20 @@ htpath :: String -> HTPath
 htpath = _normalize . parts
     where parts = filter (/=[]) . splitOn sep
 
-htshow :: HTPath -> String
-htshow = intercalate sep . _normalize
+htpshow :: HTPath -> String
+htpshow = intercalate sep . _normalize
 
-hteq :: HTPath -> HTPath -> Bool
-hteq p1 p2 = htshow p1 == htshow p2
+htpeq :: HTPath -> HTPath -> Bool
+htpeq p1 p2 = htpshow p1 == htpshow p2
 
-htconcat :: HTPath -> HTPath -> HTPath
-htconcat p1 p2 = _normalize $ p1 ++ p2
-(</>) = htconcat
+htpconcat :: HTPath -> HTPath -> HTPath
+htpconcat p1 p2 = _normalize $ p1 ++ p2
+(</>) = htpconcat
 
-htrel :: HTPath -> HTPath -> HTPath
-htrel [] path   = path
-htrel _  []     = []
-htrel base@(b:bs) path@(p:ps) =
+htprel :: HTPath -> HTPath -> HTPath
+htprel [] path   = path
+htprel _  []     = []
+htprel base@(b:bs) path@(p:ps) =
     if b == p
-        then htrel bs ps
+        then htprel bs ps
         else replicate (length base) ".." ++ path
