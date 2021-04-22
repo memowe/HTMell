@@ -15,7 +15,7 @@ data HTContent = HTContent {
 } deriving (Show, Eq)
 
 html :: HTContent -> Html
-html htc = toHtml . markdown def . pack $ rawContent htc
+html = toHtml . markdown def . pack . rawContent
 
 page :: HTContent -> ByteString
 page = renderHtml . html
