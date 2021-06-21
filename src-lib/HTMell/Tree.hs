@@ -31,7 +31,7 @@ digits_ = do
 hnodeP :: ReadP HNode
 hnodeP = do
     ord <- option Nothing $ Just <$> digits_
-    path <- munch1 (/= '.')
+    path <- munch1 (const True)
     return $ HNode path $ fromMaybe 0 ord
 
 parseMaybe :: ReadP a -> String -> Maybe a
