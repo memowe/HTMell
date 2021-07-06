@@ -4,6 +4,7 @@ module HTMell.Tree
     , parseNodeOrd
     ) where
 
+import Data.Char ( isDigit )
 import Data.Tree ( Tree )
 import Data.Maybe ( fromMaybe )
 import Text.ParserCombinators.ReadP ( ReadP, char, munch1, option, readP_to_S )
@@ -17,7 +18,7 @@ type HTree = Tree HNode
 
 digits_ :: ReadP Integer
 digits_ = do
-    ord <- read <$> munch1 (`elem` ['0'..'9'])
+    ord <- read <$> munch1 isDigit
     char '_'
     return ord
 
