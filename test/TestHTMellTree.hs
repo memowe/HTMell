@@ -1,9 +1,16 @@
 module TestHTMellTree ( testHTMellTree ) where
 
-import HTMell.Tree ( parseNodeOrd )
+import HTMell.Tree ( splitNodePath )
 
-testHNodeParsing = case parseNodeOrd "42_foo.bar" of
+testHNodeParsingWithOrd = case splitNodePath "42_foo.bar" of
     Nothing     -> False
     Just (o, p) -> o == 42 && p == "foo.bar"
 
-testHTMellTree = and [testHNodeParsing]
+testHNodeParsingWithoutOrd = case splitNodePath "foo.bar" of
+    Nothing     -> False
+    Just (o, p) -> o == 0 && p == "foo.bar"
+
+testHTMellTree = and [
+        testHNodeParsingWithOrd,
+        testHNodeParsingWithoutOrd
+    ]
