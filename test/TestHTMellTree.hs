@@ -1,9 +1,9 @@
-module TestHTMellTree (testHTMellTree) where
+module TestHTMellTree ( testHTMellTree ) where
 
-import HTMell.Tree (HNode(HNode), parseHNode)
+import HTMell.Tree ( parseNodeOrd )
 
-testHNodeParsing = case parseHNode "42_foo.bar" of
+testHNodeParsing = case parseNodeOrd "42_foo.bar" of
     Nothing     -> False
-    Just hnode  -> hnode == HNode "foo.bar" 42
+    Just (o, p) -> o == 42 && p == "foo.bar"
 
 testHTMellTree = and [testHNodeParsing]

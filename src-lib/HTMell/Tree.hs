@@ -1,7 +1,7 @@
 module HTMell.Tree
     ( HNode(..)
     , HTree(..)
-    , parseHNode
+    , parseNodeOrd
     ) where
 
 import Data.Tree ( Tree )
@@ -9,8 +9,8 @@ import Data.Maybe ( fromMaybe )
 import Text.ParserCombinators.ReadP ( ReadP, char, munch1, option, readP_to_S )
 
 data HNode = HNode
-    { path :: String
-    , ord :: Integer
+    { path      :: String
+    , ord       :: Integer
     } deriving (Eq, Show)
 
 type HTree = Tree HNode
@@ -21,11 +21,11 @@ digits_ = do
     char '_'
     return ord
 
-hnodeP :: ReadP HNode
+hnodeP :: ReadP (Integer, String)
 hnodeP = do
     ord <- option Nothing $ Just <$> digits_
     path <- munch1 (const True)
-    return $ HNode path $ fromMaybe 0 ord
+    return (fromMaybe 0 ord, path)
 
 parseMaybe :: ReadP a -> String -> Maybe a
 parseMaybe parser input =
@@ -33,5 +33,5 @@ parseMaybe parser input =
         []              -> Nothing
         ((result, _):_) -> Just result
 
-parseHNode :: String -> Maybe HNode
-parseHNode = parseMaybe hnodeP
+parseNodeOrd :: String -> Maybe (Integer, String)
+parseNodeOrd = parseMaybe hnodeP
