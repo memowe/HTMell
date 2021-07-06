@@ -1,26 +1,19 @@
 module HTMell.Tree
     ( HNode(..)
     , HTree(..)
-    , HDoc(..)
     , parseHNode
     ) where
 
-import Text.ParserCombinators.ReadP (ReadP, char, munch1, option, readP_to_S)
-import Data.Maybe (fromMaybe)
+import Data.Tree ( Tree )
+import Data.Maybe ( fromMaybe )
+import Text.ParserCombinators.ReadP ( ReadP, char, munch1, option, readP_to_S )
 
 data HNode = HNode
     { path :: String
     , ord :: Integer
     } deriving (Eq, Show)
 
-data HTree
-    = HLeaf HNode HDoc
-    | HInnerNode HNode [HTree]
-    deriving (Eq, Show)
-
-data HDoc = HDoc
-    { filepath :: FilePath
-    } deriving (Eq, Show)
+type HTree = Tree HNode
 
 digits_ :: ReadP Integer
 digits_ = do
