@@ -2,13 +2,11 @@ module TestHTMellTree ( testHTMellTree ) where
 
 import HTMell.Tree ( splitNodePath )
 
-testHNodeParsingWithOrd = case splitNodePath "42_foo.bar" of
-    Nothing     -> False
-    Just (o, p) -> o == 42 && p == "foo.bar"
+testHNodeParsingWithOrd = o == 42 && p == "foo.bar"
+    where (o, p) = splitNodePath "42_foo.bar"
 
-testHNodeParsingWithoutOrd = case splitNodePath "foo.bar" of
-    Nothing     -> False
-    Just (o, p) -> o == 0 && p == "foo.bar"
+testHNodeParsingWithoutOrd = o == 0 && p == "foo.bar"
+    where (o, p) = splitNodePath "foo.bar"
 
 testHTMellTree = and [
         testHNodeParsingWithOrd,

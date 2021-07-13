@@ -23,28 +23,22 @@ type HTree = Tree HNode
 
 -- Parsing ord and path from file/dir name -------------------------------------
 
-parseMaybe :: ReadP a -> String -> Maybe a
-parseMaybe parser input =
-    case readP_to_S parser input of
-        []              -> Nothing
-        ((result, _):_) -> Just result
-
-digitsP :: ReadP Integer
-digitsP = do
-    ord <- read <$> munch1 isDigit
+ordNum :: ReadP Integer
+ordNum = do
+    num <- read <$> munch1 isDigit
     char '_'
-    return ord
+    return num
 
-nodePathP :: ReadP (Integer, String)
-nodePathP = do
-    ord <- option Nothing $ Just <$> digitsP
-    path <- munch1 (const True)
-    return (fromMaybe 0 ord, path)
+ordNodePath :: ReadP (Integer, String)
+ordNodePath = do
+    num <- option 0 ordNum
+    rest <- munch1 (const True)
+    return (num, rest)
 
-splitNodePath :: String -> Maybe (Integer, String)
+splitNodePath :: String -> (Integer, String)
 -- ^Splits a given file or directory name in ord integer and path,
 --  if it has a leading number.
 --
--- prop> splitNodePath "42_foo" == Just (42, "foo")
--- prop> splitNodePath "foo" == Just (0, "foo")
-splitNodePath = parseMaybe nodePathP
+-- prop> splitNodePath "42_foo" == (42, "foo")
+-- prop> splitNodePath "foo" == (0, "foo")
+splitNodePath = fst . head . readP_to_S ordNodePath
