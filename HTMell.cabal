@@ -25,7 +25,8 @@ test-suite HTMell-test
     default-language: Haskell2010
     type:             exitcode-stdio-1.0
     other-modules:
+        HTMell.TestTree,
         HTMell.TestUtil
     hs-source-dirs:   test
     main-is:          Main.hs
-    build-depends:    base, HTMell
+    build-depends:    base, HTMell, containers

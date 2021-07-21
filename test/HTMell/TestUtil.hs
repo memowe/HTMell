@@ -8,4 +8,6 @@ testHNodeParsingWithOrd = o == 42 && p == "foo.bar"
 testHNodeParsingWithoutOrd = o == 0 && p == "foo.bar"
     where (o, p) = splitNodePath "foo.bar"
 
-testUtil = testHNodeParsingWithOrd && testHNodeParsingWithoutOrd
+testUtil
+    =   testHNodeParsingWithOrd
+    &&  testHNodeParsingWithoutOrd
