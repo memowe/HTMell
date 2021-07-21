@@ -2,6 +2,7 @@
 module HTMell.Tree
     ( HNode(..)
     , HTree
+    , findHNode
     ) where
 
 import qualified Data.Map as M
@@ -20,3 +21,15 @@ data HNode = HNode {
 
 -- | 'HNode' alias for readability for its property to have children
 type HTree = HNode
+
+findHNode :: HTree -> String -> Maybe HNode
+-- ^ Allows to select a "deep" 'HNode' inside a given tree via a
+--   combined path, separated by slashes. For example, this would
+--   select the @"foo"@ child's child @"bar"@ in a given @tree@:
+--
+-- > findHNode tree "foo/bar"
+findHNode tree = foldM selectChild tree . pathParts
+    where
+        selectChild = flip M.lookup . children
+        pathParts   = splitOn "/" . trimSlashes
+        trimSlashes = dropWhile (== '/') . dropWhileEnd (== '/')
