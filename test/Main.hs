@@ -2,9 +2,9 @@ module Main (main) where
 
 import System.Exit (exitFailure)
 
-import TestHTMellTree (testHTMellTree)
+import HTMell.TestUtil ( testUtil )
 
-testsPass = and [testHTMellTree]
+testsPass = and [testUtil]
 
 main :: IO ()
 main = if testsPass

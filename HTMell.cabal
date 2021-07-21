@@ -14,8 +14,10 @@ category:           Web
 extra-source-files: CHANGELOG.md
 
 library
-    exposed-modules:  HTMell.Tree
-    build-depends:    base, containers
+    exposed-modules:
+        HTMell.Tree,
+        HTMell.Util
+    build-depends:    base, containers, split
     hs-source-dirs:   src-lib
     default-language: Haskell2010
 
@@ -23,7 +25,7 @@ test-suite HTMell-test
     default-language: Haskell2010
     type:             exitcode-stdio-1.0
     other-modules:
-        TestHTMellTree
+        HTMell.TestUtil
     hs-source-dirs:   test
     main-is:          Main.hs
     build-depends:    base, HTMell
