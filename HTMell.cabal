@@ -28,5 +28,5 @@ test-suite HTMell-test
         HTMell.TestTree,
         HTMell.TestUtil
     hs-source-dirs:   test
-    main-is:          Main.hs
+    main-is:          tests.hs
     build-depends:    base, tasty, tasty-hunit, HTMell, containers
