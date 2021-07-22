@@ -2,21 +2,21 @@ module HTMell.TestTree ( testTree ) where
 
 import Test.Tasty ( testGroup )
 import Test.Tasty.HUnit ( testCase, (@?=) )
-import HTMell.Tree ( HTree(..), summary, findHNode )
+import HTMell.Tree ( HNode(..), summary, findHNode )
 import Data.Map ( empty, fromList )
 import Data.Maybe ( isNothing, fromJust )
 
-trivialTree = HTree 42 empty
-childTree   = HTree 17 (fromList [("foo", HTree 42 empty)])
-exampleTree = HTree 17 (fromList [
-        ("foo", HTree 42 (fromList [
-            ("bar", HTree 37 (fromList [
-                ("baz", HTree 108 empty),
-                ("quux", HTree 109 empty)
+trivialTree = HNode 42 empty
+childTree   = HNode 17 (fromList [("foo", HNode 42 empty)])
+exampleTree = HNode 17 (fromList [
+        ("foo", HNode 42 (fromList [
+            ("bar", HNode 37 (fromList [
+                ("baz", HNode 108 empty),
+                ("quux", HNode 109 empty)
             ])),
-            ("bidu", HTree 25 empty)
+            ("bidu", HNode 25 empty)
         ])),
-        ("xnorfzt", HTree 666 empty)
+        ("xnorfzt", HNode 666 empty)
     ])
 
 testSummary = testGroup "Tree summary"
@@ -26,7 +26,7 @@ testSummary = testGroup "Tree summary"
         summary exampleTree @?= "(foo(bar(baz,quux),bidu),xnorfzt)"
     ]
 
--- Helper operator for simplified summary testing of HTrees
+-- Helper operator for simplified summary testing of HNodes
 a @?=| b = summary (fromJust a) @?= b
 
 testFindHNode = testGroup "Find HNodes"
@@ -35,7 +35,7 @@ testFindHNode = testGroup "Find HNodes"
     , testCase "Empty query" $
         findHNode childTree "" @?= Nothing
     , testCase "Direct child" $
-        findHNode childTree "foo" @?= Just (HTree 42 empty)
+        findHNode childTree "foo" @?= Just (HNode 42 empty)
     , testCase "Complex subtree query" $
         findHNode exampleTree "foo/bar" @?=| "(baz,quux)"
     , testCase "Complex leaf query" $

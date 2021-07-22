@@ -1,7 +1,6 @@
 -- | HTMell content tree related types and functions
 module HTMell.Tree
-    ( HTree(..)
-    , HNode
+    ( HNode(..)
     , summary
     , findHNode
     ) where
@@ -12,27 +11,24 @@ import Data.List ( dropWhile, dropWhileEnd, intercalate )
 import Data.List.Split ( splitOn )
 import Control.Monad ( foldM )
 
--- | A content tree, maybe with children
-data HTree = HTree {
+-- | A content node/tree, maybe with children
+data HNode c = HNode {
     -- | defines an order for all children of its parent
     ord :: Integer,
     -- | All children of this 'HNode', addressed by their relative paths
     children :: Map String HNode
 } deriving (Eq, Show)
 
--- | 'HTree' alias for readability
-type HNode = HTree
-
-summary :: HTree -> String
+summary :: HNode c -> String
 -- ^ Very short structural summary of a given 'HTree'
-summary (HTree _ children)
+summary (HNode _ children)
     | null children = ""
     | otherwise     = "(" ++ toStr children ++ ")"
     where
         toStr       = intercalate "," . map pair . assocs
         pair (k, t) = k ++ summary t
 
-findHNode :: HTree -> String -> Maybe HNode
+findHNode :: HNode -> String -> Maybe HNode
 -- ^ Allows to select a "deep" 'HNode' inside a given tree via a
 --   combined path, separated by slashes. For example, this would
 --   select the @"foo"@ child's child @"bar"@ in a given @tree@:
