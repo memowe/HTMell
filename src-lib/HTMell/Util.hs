@@ -1,9 +1,13 @@
 -- |Useful utility functions
 module HTMell.Util
     ( splitNodePath
+    , cempty
     ) where
 
+import HTMell.Content ( HTMellContent(..) )
 import Data.Char ( isDigit )
+import Data.Map ( empty )
+import qualified Data.Text as T
 import Text.ParserCombinators.ReadP ( ReadP, char, munch1, option, readP_to_S )
 
 -- Parsing ord and path from file/dir name -------------------------------------
@@ -27,3 +31,17 @@ splitNodePath :: String -> (Integer, String)
 -- prop> splitNodePath "42_foo" == (42, "foo")
 -- prop> splitNodePath "foo" == (0, "foo")
 splitNodePath = fst . head . readP_to_S ordNodePath
+
+-- Content helper: trivial pseudo content, useful for testing
+
+data PseudoContent = PseudoContent
+    deriving (Eq, Show)
+
+instance HTMellContent PseudoContent where
+    getContent  = const $ Just PseudoContent
+    metadata    = const empty
+    toHTML      = const $ T.pack ""
+
+cempty :: PseudoContent
+-- ^ An empty "pseudo" 'HTMell.Content.HTMellContent', useful for testing
+cempty = PseudoContent
