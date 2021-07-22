@@ -1,15 +1,10 @@
-module Main (main) where
-
-import System.Exit (exitFailure)
-
+import Test.Tasty ( defaultMain, testGroup )
 import HTMell.TestTree ( testTree )
 import HTMell.TestUtil ( testUtil )
 
-testsPass
-    =   testTree
-    &&  testUtil
+unitTests = testGroup "Unit tests"
+    [ testTree
+    , testUtil
+    ]
 
-main :: IO ()
-main = if testsPass
-    then putStrLn "OK"
-    else putStrLn "Nope" >> exitFailure
+main = defaultMain $ testGroup "Tests" [unitTests]
