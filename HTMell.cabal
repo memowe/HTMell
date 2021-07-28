@@ -27,7 +27,8 @@ test-suite HTMell-test
     type:             exitcode-stdio-1.0
     other-modules:
         HTMell.TestTree,
+        HTMell.TestContent,
         HTMell.TestUtil
     hs-source-dirs:   test
     main-is:          tests.hs
-    build-depends:    base, tasty, tasty-hunit, HTMell, containers
+    build-depends:    base, tasty, tasty-hunit, HTMell, containers, directory, text
