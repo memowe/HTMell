@@ -10,7 +10,7 @@ import Data.Text ( Text )
 -- | Some content stored in 'HTMell.Tree.HNode' trees
 class HTMellContent c where
     -- | Extract a content representation
-    getContent :: FilePath -> Maybe c
+    getContent :: FilePath -> IO (Maybe c)
     -- | Some simple metadata
     metadata :: c -> Map String String
     -- | Translate our content to plain HTML 'Text'

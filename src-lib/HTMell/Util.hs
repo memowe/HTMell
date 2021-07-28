@@ -38,7 +38,7 @@ data PseudoContent = PseudoContent
     deriving (Eq, Show)
 
 instance HTMellContent PseudoContent where
-    getContent  = const $ Just PseudoContent
+    getContent  = const $ return $ Just PseudoContent
     metadata    = const empty
     toHTML      = const $ T.pack ""
 
