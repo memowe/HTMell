@@ -22,7 +22,7 @@ data HNode c = HNode {
 } deriving (Eq, Show)
 
 summary :: HNode c -> String
--- ^ Very short structural summary of a given 'HTree'
+-- ^ Very short structural summary of a given 'HNode' tree
 summary (HNode _ children _)
     | null children = ""
     | otherwise     = "(" ++ toStr children ++ ")"

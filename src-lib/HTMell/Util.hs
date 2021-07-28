@@ -1,6 +1,7 @@
 -- |Useful utility functions
 module HTMell.Util
     ( splitNodePath
+    , PseudoContent(..)
     , cempty
     ) where
 
@@ -32,8 +33,7 @@ splitNodePath :: String -> (Integer, String)
 -- prop> splitNodePath "foo" == (0, "foo")
 splitNodePath = fst . head . readP_to_S ordNodePath
 
--- Content helper: trivial pseudo content, useful for testing
-
+-- | Trivial pseudo content: useful for testing
 data PseudoContent = PseudoContent
     deriving (Eq, Show)
 
