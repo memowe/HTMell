@@ -2,7 +2,6 @@ cabal-version:      2.4
 name:               HTMell
 version:            0.1.0.0
 synopsis:           Minimal filesystem powered markdown content management system
--- description:
 homepage:           https://github.com/memowe/HTMell
 bug-reports:        https://github.com/memowe/HTMell/issues
 license:            MIT
@@ -18,7 +17,12 @@ library
         HTMell.Tree,
         HTMell.Content,
         HTMell.Util
-    build-depends:    base, containers, split, filepath, text
+    build-depends:
+        base,
+        containers,
+        split,
+        filepath,
+        text
     hs-source-dirs:   src-lib
     default-language: Haskell2010
 
@@ -31,4 +35,11 @@ test-suite HTMell-test
         HTMell.TestUtil
     hs-source-dirs:   test
     main-is:          tests.hs
-    build-depends:    base, tasty, tasty-hunit, HTMell, containers, directory, text
+    build-depends:
+        base,
+        tasty,
+        tasty-hunit,
+        HTMell,
+        containers,
+        directory,
+        text
