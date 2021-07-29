@@ -2,13 +2,14 @@
 module HTMell.Tree
     ( HTree(..)
     , HNode
+    , childList
     , summary
     , findHNode
     ) where
 
 import qualified Data.Map as M
 import Data.Map ( Map, lookup, assocs )
-import Data.List ( dropWhile, dropWhileEnd, intercalate )
+import Data.List ( sortOn, dropWhile, dropWhileEnd, intercalate )
 import Data.List.Split ( splitOn )
 import Control.Monad ( foldM )
 
@@ -20,16 +21,24 @@ data HTree = HTree {
     children :: Map String HNode
 } deriving (Eq, Show)
 
+instance Ord HTree where
+    node1 <= node2 = ord node1 <= ord node2
+
+childList :: HTree -> [(String, HTree)]
+-- ^ All child nodes of the given tree, addressed by their path
+--   from parent, ordered by their 'ord'
+childList = sortOn snd . assocs . children
+
 -- | 'HTree' alias for readability
 type HNode = HTree
 
 summary :: HTree -> String
 -- ^ Very short structural summary of a given 'HTree'
-summary (HTree _ children)
-    | null children = ""
-    | otherwise     = "(" ++ toStr children ++ ")"
+summary tree
+    | null $ children tree  = ""
+    | otherwise             = "(" ++ toStr tree ++ ")"
     where
-        toStr       = intercalate "," . map pair . assocs
+        toStr       = intercalate "," . map pair . childList
         pair (k, t) = k ++ summary t
 
 findHNode :: HTree -> String -> Maybe HNode

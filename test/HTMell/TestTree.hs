@@ -2,8 +2,8 @@ module HTMell.TestTree ( testTree ) where
 
 import Test.Tasty ( testGroup )
 import Test.Tasty.HUnit ( testCase, (@?=) )
-import HTMell.Tree ( HTree(..), summary, findHNode )
-import Data.Map ( empty, fromList )
+import HTMell.Tree ( HTree(..), childList, summary, findHNode, childList )
+import Data.Map ( empty, (!), fromList )
 import Data.Maybe ( isNothing, fromJust )
 
 trivialTree = HTree 42 empty
@@ -23,8 +23,21 @@ testSummary = testGroup "Tree summary"
     [ testCase "Empty tree" $ summary trivialTree @?= ""
     , testCase "Single child" $ summary childTree @?= "(foo)"
     , testCase "Complex tree" $
-        summary exampleTree @?= "(foo(bar(baz,quux),bidu),xnorfzt)"
+        summary exampleTree @?= "(foo(bidu,bar(baz,quux)),xnorfzt)"
     ]
+
+testChildList = testGroup "Sorted list of children"
+    [ testCase "Empty tree" $ childList trivialTree @?= []
+    , testCase "Single child" $
+        childList childTree @?= [("foo", children childTree ! "foo")]
+    , testCase "Complex tree 'foo' children" $
+        childList foo @?= map (\p -> (p, children foo ! p)) ["bidu", "bar"]
+    , testCase "Complex tree 'foo/bar' children" $
+        childList bar @?= map (\p -> (p, children bar ! p)) ["baz", "quux"]
+    ]
+    where
+        foo = children exampleTree ! "foo"
+        bar = children foo ! "bar"
 
 -- Helper operator for simplified summary testing of HTrees
 a @?=| b = summary (fromJust a) @?= b
@@ -44,5 +57,6 @@ testFindHNode = testGroup "Find HNodes"
 
 testTree = testGroup "Content tree tests"
     [ testSummary
+    , testChildList
     , testFindHNode
     ]
