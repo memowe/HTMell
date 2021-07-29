@@ -1,13 +1,14 @@
 -- | HTMell content tree related types and functions
 module HTMell.Tree
     ( HNode(..)
+    , childList
     , summary
     , findHNode
     ) where
 
 import qualified Data.Map as M
 import Data.Map ( Map, lookup, assocs )
-import Data.List ( dropWhile, dropWhileEnd, intercalate )
+import Data.List ( sortOn, dropWhile, dropWhileEnd, intercalate )
 import Data.List.Split ( splitOn )
 import Control.Monad ( foldM )
 
@@ -21,13 +22,21 @@ data HNode c = HNode {
     content :: c
 } deriving (Eq, Show)
 
-summary :: HNode c -> String
--- ^ Very short structural summary of a given 'HNode' tree
-summary (HNode _ children _)
-    | null children = ""
-    | otherwise     = "(" ++ toStr children ++ ")"
+instance (Eq c) => Ord (HNode c) where
+    node1 <= node2 = ord node1 <= ord node2
+
+childList :: (Eq c) => HNode c -> [(String, HNode c)]
+-- ^ All child nodes of the given tree, addressed by their path
+--   from parent, ordered by their 'ord'
+childList = sortOn snd . assocs . children
+
+summary :: (Eq c) => HNode c -> String
+-- ^ Very short structural summary of a given 'HTree'
+summary tree
+    | null $ children tree  = ""
+    | otherwise             = "(" ++ toStr tree ++ ")"
     where
-        toStr       = intercalate "," . map pair . assocs
+        toStr       = intercalate "," . map pair . childList
         pair (k, t) = k ++ summary t
 
 findHNode :: HNode c -> String -> Maybe (HNode c)
