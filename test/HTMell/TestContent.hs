@@ -9,18 +9,23 @@ import Data.Map ( empty )
 import qualified Data.Text as T
 import Data.Text ( pack )
 
-prepareRawContent :: IO (FilePath, Maybe RawHTMLContent)
-prepareRawContent = do
+writeRaw :: IO FilePath
+writeRaw = do
     tmpDir <- getTemporaryDirectory
     let tmpFile = tmpDir ++ "/" ++ "42_raw.html"
     writeFile tmpFile "<h1>Hello HTMell</h1>"
-    content <- getContent tmpFile
-    return (tmpFile, content)
+    return tmpFile
 
-cleanupRawContent :: (FilePath, Maybe RawHTMLContent) -> IO ()
-cleanupRawContent = removeFile . fst
+rawIO :: IO (FilePath, Maybe RawHTMLContent)
+rawIO = do
+    fileName <- writeRaw
+    content <- getContent fileName
+    return (fileName, content)
 
-testRawContent fileContent = testGroup "Raw HTML Content from file"
+cleanupRaw :: (FilePath, Maybe RawHTMLContent) -> IO ()
+cleanupRaw = removeFile . fst
+
+testRaw fileContent = testGroup "Raw HTML Content from file"
     [ testCase "Correct metadata" $ do
         content <- fromJust . snd <$> fileContent
         metadata content @?= empty
@@ -29,11 +34,8 @@ testRawContent fileContent = testGroup "Raw HTML Content from file"
         toHTML content @?= T.pack "<h1>Hello HTMell</h1>"
     ]
 
-testRawHTMLContent = withResource
-    prepareRawContent
-    cleanupRawContent
-    testRawContent
+testRawHTML = withResource rawIO cleanupRaw testRaw
 
 testContent = testGroup "Content tests"
-    [ testRawHTMLContent
+    [ testRawHTML
     ]
