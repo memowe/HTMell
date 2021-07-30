@@ -33,6 +33,7 @@ test-suite HTMell-test
         HTMell.TestTree,
         HTMell.TestContent,
         HTMell.TestUtil
+        HTMell.Test.Util
     hs-source-dirs:   test
     main-is:          tests.hs
     build-depends:
@@ -43,4 +44,5 @@ test-suite HTMell-test
         containers,
         directory,
         filepath,
-        text
+        text,
+        random

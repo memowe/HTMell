@@ -2,7 +2,8 @@ module HTMell.TestContent ( testContent ) where
 
 import Test.Tasty ( testGroup, withResource, TestTree )
 import Test.Tasty.HUnit ( testCase, (@?=) )
-import System.Directory ( getTemporaryDirectory, removeFile )
+import HTMell.Test.Util ( testDirectory )
+import System.Directory ( removeFile )
 import System.FilePath ((</>))
 import HTMell.Content ( RawHTMLContent(..), HTMellContent (getContent, toHTML, metadata) )
 import Data.Maybe ( fromJust )
@@ -10,23 +11,7 @@ import Data.Map ( empty )
 import qualified Data.Text as T
 import Data.Text ( pack )
 
-writeRaw :: IO FilePath
-writeRaw = do
-    tmpDir <- getTemporaryDirectory
-    let tmpFile = tmpDir </> "42_raw.html"
-    writeFile tmpFile "<h1>Hello HTMell</h1>"
-    return tmpFile
-
-rawIO :: IO (FilePath, Maybe RawHTMLContent)
-rawIO = do
-    fileName <- writeRaw
-    content <- getContent fileName
-    return (fileName, content)
-
-cleanupRaw :: (FilePath, Maybe RawHTMLContent) -> IO ()
-cleanupRaw = removeFile . fst
-
-testRaw fileContent = testGroup "Raw HTML Content from file"
+testRawHTML fileContent = testGroup "Raw HTML Content from file"
     [ testCase "Correct metadata" $ do
         content <- fromJust . snd <$> fileContent
         metadata content @?= empty
@@ -35,8 +20,21 @@ testRaw fileContent = testGroup "Raw HTML Content from file"
         toHTML content @?= T.pack "<h1>Hello HTMell</h1>"
     ]
 
-testRawHTML = withResource rawIO cleanupRaw testRaw
+testRawHTMLFile = withResource io cleanup testRawHTML
+    where
+        io :: IO (FilePath, Maybe RawHTMLContent)
+        io = do
+            name <- write
+            content <- getContent name
+            return (name, content)
+        write :: IO FilePath
+        write = do
+            file <- (</> "42_raw.html") <$> testDirectory
+            writeFile file "<h1>Hello HTMell</h1>"
+            return file
+        cleanup :: (FilePath, Maybe RawHTMLContent) -> IO ()
+        cleanup = removeFile . fst
 
 testContent = testGroup "Content tests"
-    [ testRawHTML
+    [ testRawHTMLFile
     ]
