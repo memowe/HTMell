@@ -42,4 +42,5 @@ test-suite HTMell-test
         HTMell,
         containers,
         directory,
+        filepath,
         text

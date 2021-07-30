@@ -3,6 +3,7 @@ module HTMell.TestContent ( testContent ) where
 import Test.Tasty ( testGroup, withResource, TestTree )
 import Test.Tasty.HUnit ( testCase, (@?=) )
 import System.Directory ( getTemporaryDirectory, removeFile )
+import System.FilePath ((</>))
 import HTMell.Content ( RawHTMLContent(..), HTMellContent (getContent, toHTML, metadata) )
 import Data.Maybe ( fromJust )
 import Data.Map ( empty )
@@ -12,7 +13,7 @@ import Data.Text ( pack )
 writeRaw :: IO FilePath
 writeRaw = do
     tmpDir <- getTemporaryDirectory
-    let tmpFile = tmpDir ++ "/" ++ "42_raw.html"
+    let tmpFile = tmpDir </> "42_raw.html"
     writeFile tmpFile "<h1>Hello HTMell</h1>"
     return tmpFile
 
