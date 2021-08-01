@@ -2,12 +2,14 @@
 module HTMell.Tree
     ( HNode(..)
     , childList
+    , isLeaf
+    , isInnerNode
     , summary
     , findHNode
     ) where
 
 import qualified Data.Map as M
-import Data.Map ( Map, lookup, assocs )
+import Data.Map ( Map, null, lookup, assocs )
 import Data.List ( sortOn, dropWhile, dropWhileEnd, intercalate )
 import Data.List.Split ( splitOn )
 import Control.Monad ( foldM )
@@ -30,10 +32,18 @@ childList :: (Eq c) => HNode c -> [(String, HNode c)]
 --   from parent, ordered by their 'ord'
 childList = sortOn snd . assocs . children
 
+isLeaf :: HNode c -> Bool
+-- ^ Test if the given 'HNode' has no children
+isLeaf = M.null . children
+
+isInnerNode :: HNode c -> Bool
+-- ^ Test if the given 'Hnode' has children
+isInnerNode = not . isLeaf
+
 summary :: (Eq c) => HNode c -> String
 -- ^ Very short structural summary of a given 'HTree'
 summary tree
-    | null $ children tree  = ""
+    | M.null $ children tree  = ""
     | otherwise             = "(" ++ toStr tree ++ ")"
     where
         toStr       = intercalate "," . map pair . childList

@@ -2,7 +2,7 @@ module HTMell.TestTree ( testTree ) where
 
 import Test.Tasty ( testGroup )
 import Test.Tasty.HUnit ( testCase, (@?=) )
-import HTMell.Tree ( HNode(..), childList, summary, findHNode )
+import HTMell.Tree ( HNode(..), isLeaf, isInnerNode, childList, summary, findHNode )
 import HTMell.Util ( cempty )
 import Data.Map ( empty, (!), fromList )
 import Data.Maybe ( isNothing, fromJust )
@@ -19,6 +19,21 @@ exampleTree = HNode 17 (fromList [
         ]) cempty),
         ("xnorfzt", HNode 666 empty cempty)
     ]) cempty
+
+testLeaf = testGroup "Leaf/Inner node"
+    [ testCase "Empty tree leaf" $ isLeaf trivialTree @?= True
+    , testCase "Empty tree inner node" $ isInnerNode trivialTree @?= False
+    , testCase "Single child leaf" $ isLeaf childTree @?= False
+    , testCase "Single child inner node" $ isInnerNode childTree @?= True
+    , testCase "Complex tree leaf is leaf" $
+        isLeaf (fromJust $ findHNode exampleTree "foo/bar/baz") @?= True
+    , testCase "Complex tree leaf is not inner node" $
+        isInnerNode (fromJust $ findHNode exampleTree "foo/bar/baz") @?= False
+    , testCase "Complex tree inner node is not leaf" $
+        isLeaf (fromJust $ findHNode exampleTree "foo/bar") @?= False
+    , testCase "Complex tree inner node is inner node" $
+        isInnerNode (fromJust $ findHNode exampleTree "foo/bar") @?= True
+    ]
 
 testSummary = testGroup "Tree summary"
     [ testCase "Empty tree" $ summary trivialTree @?= ""
@@ -57,7 +72,8 @@ testFindHNode = testGroup "Find HNodes"
     ]
 
 testTree = testGroup "Content tree tests"
-    [ testSummary
+    [ testLeaf
+    , testSummary
     , testChildList
     , testFindHNode
     ]
