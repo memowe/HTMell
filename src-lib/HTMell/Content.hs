@@ -20,7 +20,7 @@ class HTMellContent c where
     toHTML :: c -> Text
 
 -- | Content wrapper for raw HTML files, without metadata
-newtype RawHTMLContent = RawHTMLContent Text deriving Show
+newtype RawHTMLContent = RawHTMLContent Text deriving (Eq, Show)
 
 isRawHTML :: FilePath -> Bool
 isRawHTML = (== ".html") . takeExtension

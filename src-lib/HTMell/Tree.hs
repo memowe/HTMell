@@ -5,6 +5,7 @@ module HTMell.Tree
     , isLeaf
     , isInnerNode
     , summary
+    , processTree
     , findHNode
     ) where
 
@@ -48,6 +49,14 @@ summary tree
     where
         toStr       = intercalate "," . map pair . childList
         pair (k, t) = k ++ summary t
+
+processTree :: ((Integer, Map String (HNode b), Maybe a) -> HNode b) ->
+    HNode a -> HNode b
+-- ^ Bottom-up inside-out processing of a content tree. Each node will be modified
+--   by the given function. The arguments for the given function are the ord,
+--   the updated children and the content of the node to be modified.
+processTree f node = f (ord node, updatedChildren, content node)
+    where updatedChildren = processTree f <$> children node
 
 findHNode :: HNode c -> String -> Maybe (HNode c)
 -- ^ Allows to select a "deep" 'HNode' inside a given tree via a
