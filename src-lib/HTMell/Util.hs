@@ -44,6 +44,6 @@ instance HTMellContent PseudoContent where
     metadata    = const empty
     toHTML      = const $ T.pack ""
 
-cempty :: PseudoContent
+cempty :: Maybe PseudoContent
 -- ^ An empty "pseudo" 'HTMell.Content.HTMellContent', useful for testing
-cempty = PseudoContent
+cempty = Just PseudoContent

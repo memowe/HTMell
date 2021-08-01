@@ -21,7 +21,7 @@ data HNode c = HNode {
     -- | All children of this 'HNode', addressed by their relative paths
     children :: Map String (HNode c),
     -- | Content of this node
-    content :: c
+    content :: Maybe c
 } deriving (Eq, Show)
 
 instance (Eq c) => Ord (HNode c) where
