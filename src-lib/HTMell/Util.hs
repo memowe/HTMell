@@ -11,7 +11,7 @@ import Data.Map ( empty )
 import qualified Data.Text as T
 import Text.ParserCombinators.ReadP ( ReadP, char, munch1, option, readP_to_S )
 
--- Parsing ord and path from file/dir name -------------------------------------
+-- Parsing ord and path from file/dir name -----------------------------
 
 ordNum :: ReadP Integer
 ordNum = do
@@ -33,7 +33,7 @@ splitNodePath :: String -> (Integer, String)
 -- prop> splitNodePath "foo" == (0, "foo")
 splitNodePath = fst . head . readP_to_S ordNodePath
 
--- Pseudo/Empty content instance, useful for testing ---------------------------
+-- Pseudo/Empty content instance, useful for testing -------------------
 
 -- | Trivial pseudo content: useful for testing
 data PseudoContent = PseudoContent
