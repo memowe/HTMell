@@ -34,6 +34,7 @@ test-suite HTMell-test
     type:             exitcode-stdio-1.0
     other-modules:
         HTMell.TestTree,
+        HTMell.TestTreeLoad,
         HTMell.TestContent,
         HTMell.TestUtil
         HTMell.Test.Util
