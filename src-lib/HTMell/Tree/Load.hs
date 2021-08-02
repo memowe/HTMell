@@ -2,14 +2,14 @@ module HTMell.Tree.Load
     ( buildTree
     ) where
 
-import HTMell.Tree ( HNode(..), isLeaf, processTree )
+import HTMell.Tree ( HNode(..), isInnerNode, processTree )
 import HTMell.Content ( HTMellContent(..) )
 import HTMell.Util ( compose, splitNodePath )
 
 import qualified Data.Map as M
 import Data.Map ( Map, fromList )
-import Data.Maybe ( catMaybes, isNothing )
-import Control.Bool ( (<&&>) )
+import Data.Maybe ( catMaybes, isJust )
+import Control.Bool ( (<||>) )
 import System.FilePath ( (</>) )
 import System.Directory ( doesFileExist, doesDirectoryExist, listDirectory )
 
@@ -25,6 +25,7 @@ buildTree path = do
             -- Composed and applied from top-down
             [ indexContent
             , removeIndex
+            , noEmptyLeaves
             ]
 
 loadTree :: HTMellContent c => Integer -> FilePath -> IO (Maybe (HNode c))
@@ -69,3 +70,7 @@ indexContent (o, ch, c) = HNode o ch $
 removeIndex :: (Integer, Map String (HNode c), Maybe c) -> HNode c
 removeIndex (o, ch, c) = HNode o (noIndex ch) c
     where noIndex = M.filterWithKey $ const . (/= "index")
+
+noEmptyLeaves :: (Integer, Map String (HNode c), Maybe c) -> HNode c
+noEmptyLeaves (o, ch, c) = HNode o (M.filter isOK ch) c
+    where isOK = isInnerNode <||> isJust . content
