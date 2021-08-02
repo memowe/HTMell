@@ -9,7 +9,6 @@ import HTMell.Content ( RawHTMLContent(..), HTMellContent (getContent, toHTML, m
 import Data.Maybe ( fromJust )
 import Data.Map ( empty )
 import qualified Data.Text as T
-import Data.Text ( pack )
 
 testRawHTML fileContent = testGroup "Raw HTML Content from file"
     [ testCase "Correct metadata" $ do

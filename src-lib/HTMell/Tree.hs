@@ -10,7 +10,7 @@ module HTMell.Tree
     ) where
 
 import qualified Data.Map as M
-import Data.Map ( Map, null, lookup, assocs )
+import Data.Map ( Map, assocs )
 import Data.List ( sortOn, dropWhile, dropWhileEnd, intercalate )
 import Data.List.Split ( splitOn )
 import Control.Monad ( foldM )
