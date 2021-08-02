@@ -23,6 +23,7 @@ testTreeLoad = withResource io cleanup testLoadedTree
             dir <- testDirectory
             createFile (dir </> "2_foo.html")                   "<h1>Foo</h1>"
             createFile (dir </> "3_bar.html")                   "<h1>Bar</h1>"
+            createFile (dir </> "4_no-html.foo")                "<h1>Nope</h1>"
             createDirectoryIfMissing True (dir </> "1000_baz")
             createFile (dir </> "1_quux" </> "42_answer.html")  "<h1>42</h1>"
             createFile (dir </> "1_quux" </> "17_17.html")      "<h1>17</h1>"
