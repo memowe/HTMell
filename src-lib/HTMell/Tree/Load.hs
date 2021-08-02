@@ -58,7 +58,11 @@ loadTree ordNum path = do
                 Just child  -> Just (path, child)
                 _           -> Nothing
 
-indexContent :: (Integer, Map String (HNode c), Maybe c) -> HNode c
+-- Tree processing steps -----------------------------------------------
+
+-- Just a little helper for tree processors that only modify child maps
+childProcess f (o, ch, c) = HNode o (f ch) c
+
 indexContent (o, ch, c) = HNode o ch $
     case c of
         Nothing -> indexContent
@@ -67,10 +71,8 @@ indexContent (o, ch, c) = HNode o ch $
             child <- M.lookup "index" ch
             content child
 
-removeIndex :: (Integer, Map String (HNode c), Maybe c) -> HNode c
-removeIndex (o, ch, c) = HNode o (noIndex ch) c
-    where noIndex = M.filterWithKey $ const . (/= "index")
+removeIndex = childProcess $
+    M.filterWithKey $ const . (/= "index")
 
-noEmptyLeaves :: (Integer, Map String (HNode c), Maybe c) -> HNode c
-noEmptyLeaves (o, ch, c) = HNode o (M.filter isOK ch) c
-    where isOK = isInnerNode <||> isJust . content
+noEmptyLeaves = childProcess $
+    M.filter $ isInnerNode <||> isJust . content
