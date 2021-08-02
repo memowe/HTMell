@@ -22,14 +22,14 @@ ordNum = do
 ordNodePath :: ReadP (Integer, String)
 ordNodePath = do
     num <- option 0 ordNum
-    rest <- munch1 (const True)
+    rest <- munch1 (/= '.')
     return (num, rest)
 
 splitNodePath :: String -> (Integer, String)
 -- ^Splits a given file or directory name in ord integer and path,
---  if it has a leading number.
+--  if it has a leading number. The extension is stripped.
 --
--- prop> splitNodePath "42_foo" == (42, "foo")
+-- prop> splitNodePath "42_foo.bar" == (42, "foo")
 -- prop> splitNodePath "foo" == (0, "foo")
 splitNodePath = fst . head . readP_to_S ordNodePath
 
