@@ -1,10 +1,10 @@
 module HTMell.Tree.Load
-    ( loadTree
+    ( buildTree
     ) where
 
 import HTMell.Tree ( HNode(..), isLeaf, processTree )
 import HTMell.Content ( HTMellContent(..) )
-import HTMell.Util ( splitNodePath )
+import HTMell.Util ( compose, splitNodePath )
 
 import qualified Data.Map as M
 import Data.Map ( Map, fromList )
@@ -12,6 +12,19 @@ import Data.Maybe ( catMaybes, isNothing )
 import Control.Bool ( (<&&>) )
 import System.FilePath ( (</>) )
 import System.Directory ( doesFileExist, doesDirectoryExist, listDirectory )
+
+buildTree :: HTMellContent c => FilePath -> IO (Maybe (HNode c))
+-- ^ TODO: Loads a content tree from file system
+buildTree path = do
+    rawTree <- loadTree 0 path
+    return $ case rawTree of
+        Just rt -> Just $ process rt
+        _       -> Nothing
+    where
+        process = compose $ processTree <$> reverse
+            -- Composed and applied from top-down
+            [
+            ]
 
 loadTree :: HTMellContent c => Integer -> FilePath -> IO (Maybe (HNode c))
 loadTree ordNum path = do

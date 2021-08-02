@@ -1,6 +1,7 @@
 -- |Useful utility functions
 module HTMell.Util
-    ( splitNodePath
+    ( compose
+    , splitNodePath
     , PseudoContent(..)
     , cempty
     ) where
@@ -10,6 +11,12 @@ import Data.Char ( isDigit )
 import Data.Map ( empty )
 import qualified Data.Text as T
 import Text.ParserCombinators.ReadP ( ReadP, char, munch1, option, readP_to_S )
+
+-- Handy tools ---------------------------------------------------------
+
+compose :: [a -> a] -> (a -> a)
+-- ^ Composition of a list of composable functions
+compose = foldr (.) id
 
 -- Parsing ord and path from file/dir name -----------------------------
 
