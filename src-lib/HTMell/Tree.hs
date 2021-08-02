@@ -38,11 +38,11 @@ isLeaf :: HNode c -> Bool
 isLeaf = M.null . children
 
 isInnerNode :: HNode c -> Bool
--- ^ Test if the given 'Hnode' has children
+-- ^ Test if the given 'HNode' has children
 isInnerNode = not . isLeaf
 
 summary :: (Eq c) => HNode c -> String
--- ^ Very short structural summary of a given 'HTree'
+-- ^ Very short structural summary of a given tree
 summary tree
     | M.null $ children tree  = ""
     | otherwise             = "(" ++ toStr tree ++ ")"
