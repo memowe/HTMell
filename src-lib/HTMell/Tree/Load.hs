@@ -23,7 +23,8 @@ buildTree path = do
     where
         process = compose $ processTree <$> reverse
             -- Composed and applied from top-down
-            [
+            [ indexContent
+            , removeIndex
             ]
 
 loadTree :: HTMellContent c => Integer -> FilePath -> IO (Maybe (HNode c))
@@ -55,3 +56,16 @@ loadTree ordNum path = do
             return $ case child of
                 Just child  -> Just (path, child)
                 _           -> Nothing
+
+indexContent :: (Integer, Map String (HNode c), Maybe c) -> HNode c
+indexContent (o, ch, c) = HNode o ch $
+    case c of
+        Nothing -> indexContent
+        other   -> other
+    where indexContent = do
+            child <- M.lookup "index" ch
+            content child
+
+removeIndex :: (Integer, Map String (HNode c), Maybe c) -> HNode c
+removeIndex (o, ch, c) = HNode o (noIndex ch) c
+    where noIndex = M.filterWithKey $ const . (/= "index")

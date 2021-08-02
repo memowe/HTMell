@@ -47,4 +47,10 @@ testLoadedTree dirIO = testGroup "Content tree loading tests"
     , testCase "Correct /quux/answer content" $ do
         tree <- fromJust . snd <$> dirIO
         conTest tree "/quux/answer" @?= "<h1>42</h1>"
+    , testCase "Inner node /quux content" $ do
+        tree <- fromJust . snd <$> dirIO
+        conTest tree "/quux" @?= "<h1>Quux</h1>"
+    , testCase "Inner index node removed" $ do
+        tree <- fromJust . snd <$> dirIO
+        findHNode tree "/quux/index" @?= Nothing
     ]
