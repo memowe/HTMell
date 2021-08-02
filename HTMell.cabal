@@ -15,13 +15,16 @@ extra-source-files: CHANGELOG.md
 library
     exposed-modules:
         HTMell.Tree,
+        HTMell.Tree.Load,
         HTMell.Content,
         HTMell.Util
     build-depends:
         base,
         containers,
         split,
+        control-bool,
         filepath,
+        directory,
         text
     hs-source-dirs:   src-lib
     default-language: Haskell2010
