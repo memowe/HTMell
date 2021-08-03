@@ -4,10 +4,10 @@ module HTMell.Tree.Load.Workflow
   , noEmptyLeaves
   ) where
 
-import HTMell.Tree ( HNode(..), isInnerNode )
+import HTMell.Tree ( HNode(..), isLeaf )
 import qualified Data.Map as M
-import Data.Maybe ( isJust )
-import Control.Bool ( (<||>) )
+import Data.Maybe ( isNothing )
+import Control.Bool ( notF, (<&&>) )
 
 -- Just a little helper for tree processors that only modify child maps
 childProcess f (o, ch, c) = HNode o (f ch) c
@@ -20,4 +20,4 @@ removeIndex = childProcess $
   M.filterWithKey $ const . (/= "index")
 
 noEmptyLeaves = childProcess $
-  M.filter $ isInnerNode <||> isJust . content
+  M.filter $ notF $ isLeaf <&&> isNothing . content
