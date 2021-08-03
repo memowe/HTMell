@@ -3,8 +3,8 @@
 **Minimal filesystem powered markdown content management system**
 
 [![Build and test](https://github.com/memowe/HTMell/actions/workflows/test.yml/badge.svg)](https://github.com/memowe/HTMell/actions/workflows/test.yml)
-[![Publish API docs](https://github.com/memowe/HTMell/actions/workflows/haddock-pages.yml/badge.svg)](https://github.com/memowe/HTMell/actions/workflows/haddock-pages.yml)
-[![API docs](https://img.shields.io/badge/API%20docs-Haddock-8a80a8?style=flat&logo=haskell&logoColor=lightgray)](https://mirko.westermeier.de/HTMell/apidocs/)
+[![Publish documentation](https://github.com/memowe/HTMell/actions/workflows/haddock-pages.yml/badge.svg)](https://github.com/memowe/HTMell/actions/workflows/haddock-pages.yml)
+[![Haddock documentation](https://img.shields.io/badge/Haddock-Documentation-8a80a8?style=flat&logo=haskell&logoColor=lightgray)](https://mirko.westermeier.de/HTMell/)
 
 ## Contributors
 
