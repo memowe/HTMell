@@ -44,8 +44,8 @@ isInnerNode = not . isLeaf
 summary :: (Eq c) => HNode c -> String
 -- ^ Very short structural summary of a given tree
 summary tree
-    | M.null $ children tree  = ""
-    | otherwise             = "(" ++ toStr tree ++ ")"
+    | isLeaf tree   = ""
+    | otherwise     = "(" ++ toStr tree ++ ")"
     where
         toStr       = intercalate "," . map pair . childList
         pair (k, t) = k ++ summary t
