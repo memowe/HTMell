@@ -13,41 +13,41 @@ category:           Web
 extra-source-files: CHANGELOG.md
 
 library
-    exposed-modules:
-        HTMell.Tree,
-        HTMell.Tree.Load,
-        HTMell.Tree.Load.Workflow
-        HTMell.Content,
-        HTMell.Util
-    build-depends:
-        base,
-        containers,
-        split,
-        control-bool,
-        filepath,
-        directory,
-        text
-    hs-source-dirs:   src-lib
-    default-language: Haskell2010
+  exposed-modules:
+    HTMell.Tree,
+    HTMell.Tree.Load,
+    HTMell.Tree.Load.Workflow
+    HTMell.Content,
+    HTMell.Util
+  build-depends:
+    base,
+    containers,
+    split,
+    control-bool,
+    filepath,
+    directory,
+    text
+  hs-source-dirs: src-lib
+  default-language: Haskell2010
 
 test-suite HTMell-test
-    default-language: Haskell2010
-    type:             exitcode-stdio-1.0
-    other-modules:
-        HTMell.TestTree,
-        HTMell.TestTreeLoad,
-        HTMell.TestContent,
-        HTMell.TestUtil
-        HTMell.Test.Util
-    hs-source-dirs:   test
-    main-is:          tests.hs
-    build-depends:
-        base,
-        tasty,
-        tasty-hunit,
-        HTMell,
-        containers,
-        directory,
-        filepath,
-        text,
-        random
+  default-language: Haskell2010
+  type: exitcode-stdio-1.0
+  other-modules:
+    HTMell.TestTree,
+    HTMell.TestTreeLoad,
+    HTMell.TestContent,
+    HTMell.TestUtil
+    HTMell.Test.Util
+  hs-source-dirs: test
+  main-is: tests.hs
+  build-depends:
+    base,
+    tasty,
+    tasty-hunit,
+    HTMell,
+    containers,
+    directory,
+    filepath,
+    text,
+    random

@@ -10,30 +10,31 @@ import Data.Maybe ( fromJust )
 import Data.Map ( empty )
 import qualified Data.Text as T
 
+testRawHTML :: HTMellContent c => IO (FilePath, Maybe c) -> TestTree
 testRawHTML fileContent = testGroup "Raw HTML Content from file"
-    [ testCase "Correct metadata" $ do
-        content <- fromJust . snd <$> fileContent
-        metadata content @?= empty
-    , testCase "Correct content" $ do
-        content <- fromJust . snd <$> fileContent
-        toHTML content @?= T.pack "<h1>Hello HTMell</h1>"
-    ]
+  [ testCase "Correct metadata" $ do
+      content <- fromJust . snd <$> fileContent
+      metadata content @?= empty
+  , testCase "Correct content" $ do
+      content <- fromJust . snd <$> fileContent
+      toHTML content @?= T.pack "<h1>Hello HTMell</h1>"
+  ]
 
 testRawHTMLFile = withResource io cleanup testRawHTML
-    where
-        io :: IO (FilePath, Maybe RawHTMLContent)
-        io = do
-            name <- write
-            content <- getContent name
-            return (name, content)
-        write :: IO FilePath
-        write = do
-            file <- (</> "42_raw.html") <$> testDirectory
-            writeFile file "<h1>Hello HTMell</h1>"
-            return file
-        cleanup :: (FilePath, Maybe RawHTMLContent) -> IO ()
-        cleanup = removeFile . fst
+  where
+    io :: IO (FilePath, Maybe RawHTMLContent)
+    io = do
+      name <- write
+      content <- getContent name
+      return (name, content)
+    write :: IO FilePath
+    write = do
+      file <- (</> "42_raw.html") <$> testDirectory
+      writeFile file "<h1>Hello HTMell</h1>"
+      return file
+    cleanup :: (FilePath, Maybe RawHTMLContent) -> IO ()
+    cleanup = removeFile . fst
 
 testContent = testGroup "Content tests"
-    [ testRawHTMLFile
-    ]
+  [ testRawHTMLFile
+  ]

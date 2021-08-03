@@ -1,10 +1,10 @@
 -- |Useful utility functions
 module HTMell.Util
-    ( compose
-    , splitNodePath
-    , PseudoContent(..)
-    , cempty
-    ) where
+  ( compose
+  , splitNodePath
+  , PseudoContent(..)
+  , cempty
+  ) where
 
 import HTMell.Content ( HTMellContent(..) )
 import Data.Char ( isDigit )
@@ -22,15 +22,15 @@ compose = foldr (.) id
 
 ordNum :: ReadP Integer
 ordNum = do
-    num <- read <$> munch1 isDigit
-    char '_'
-    return num
+  num <- read <$> munch1 isDigit
+  char '_'
+  return num
 
 ordNodePath :: ReadP (Integer, String)
 ordNodePath = do
-    num <- option 0 ordNum
-    rest <- munch1 (/= '.')
-    return (num, rest)
+  num   <- option 0 ordNum
+  rest  <- munch1 (/= '.')
+  return (num, rest)
 
 splitNodePath :: String -> (Integer, String)
 -- ^Splits a given file or directory name in ord integer and path,
@@ -44,12 +44,12 @@ splitNodePath = fst . head . readP_to_S ordNodePath
 
 -- | Trivial pseudo content: useful for testing
 data PseudoContent = PseudoContent
-    deriving (Eq, Show)
+  deriving (Eq, Show)
 
 instance HTMellContent PseudoContent where
-    getContent  = const $ return $ Just PseudoContent
-    metadata    = const empty
-    toHTML      = const $ T.pack ""
+  getContent  = const $ return $ Just PseudoContent
+  metadata    = const empty
+  toHTML      = const $ T.pack ""
 
 cempty :: Maybe PseudoContent
 -- ^ An empty "pseudo" 'HTMell.Content.HTMellContent', useful for testing
