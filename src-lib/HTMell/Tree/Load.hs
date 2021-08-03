@@ -3,13 +3,13 @@ module HTMell.Tree.Load
     ) where
 
 import HTMell.Tree ( HNode(..), isInnerNode, processTree )
+import HTMell.Tree.Load.Workflow ( indexContent, removeIndex, noEmptyLeaves )
 import HTMell.Content ( HTMellContent(..) )
 import HTMell.Util ( compose, splitNodePath )
 
 import qualified Data.Map as M
 import Data.Map ( Map, fromList )
 import Data.Maybe ( catMaybes, isJust )
-import Control.Bool ( (<||>) )
 import System.FilePath ( (</>) )
 import System.Directory ( doesFileExist, doesDirectoryExist, listDirectory )
 
@@ -57,22 +57,3 @@ loadTree ordNum path = do
             return $ case child of
                 Just child  -> Just (path, child)
                 _           -> Nothing
-
--- Tree processing steps -----------------------------------------------
-
--- Just a little helper for tree processors that only modify child maps
-childProcess f (o, ch, c) = HNode o (f ch) c
-
-indexContent (o, ch, c) = HNode o ch $
-    case c of
-        Nothing -> indexContent
-        other   -> other
-    where indexContent = do
-            child <- M.lookup "index" ch
-            content child
-
-removeIndex = childProcess $
-    M.filterWithKey $ const . (/= "index")
-
-noEmptyLeaves = childProcess $
-    M.filter $ isInnerNode <||> isJust . content

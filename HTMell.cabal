@@ -16,6 +16,7 @@ library
     exposed-modules:
         HTMell.Tree,
         HTMell.Tree.Load,
+        HTMell.Tree.Load.Workflow
         HTMell.Content,
         HTMell.Util
     build-depends:
