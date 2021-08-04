@@ -19,6 +19,7 @@ library
     HTMell.Tree.Load
     HTMell.Tree.Load.Transformations
     HTMell.Content
+    HTMell.Content.Metadata.Frontmatter
     HTMell.Util
   build-depends:
     base,
@@ -38,6 +39,7 @@ test-suite HTMell-test
     HTMell.TestTree
     HTMell.TestTreeLoad
     HTMell.TestContent
+    HTMell.TestFrontmatter
     HTMell.TestFrontend
     HTMell.TestUtil
     HTMell.Test.Util
