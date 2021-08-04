@@ -17,7 +17,7 @@ library
     HTMell
     HTMell.Tree
     HTMell.Tree.Load
-    HTMell.Tree.Load.Workflow
+    HTMell.Tree.Load.Transformations
     HTMell.Content
     HTMell.Util
   build-depends:

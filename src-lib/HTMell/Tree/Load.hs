@@ -3,7 +3,7 @@ module HTMell.Tree.Load
   ) where
 
 import HTMell.Tree ( HNode(..), isInnerNode, processTree )
-import HTMell.Tree.Load.Workflow ( indexContent, removeIndex, noEmptyLeaves )
+import HTMell.Tree.Load.Transformations ( indexContent, removeIndex, noEmptyLeaves )
 import HTMell.Content ( HTMellContent(..) )
 import HTMell.Util ( compose, splitNodePath )
 
