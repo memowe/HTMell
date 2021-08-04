@@ -50,8 +50,9 @@ ordNodePath = do
   rest  <- munch1 (/= '.')
   return (num, rest)
 
--- | Splits a given file or directory name in 'ord' 'Integer' and name, if
--- it has a leading number, followed by @"_"@. The extension is stripped.
+-- | Splits a given file or directory name in 'HTMell.Tree.ord' 'Integer'
+-- and name, if it has a leading number, followed by @"_"@. The extension
+-- is stripped.
 --
 -- prop> splitNodePath "42_foo.bar" == (42, "foo")
 -- prop> splitNodePath "foo" == (0, "foo")
