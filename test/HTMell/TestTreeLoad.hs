@@ -13,12 +13,10 @@ import System.Directory ( createDirectoryIfMissing, removeDirectoryRecursive )
 
 testTreeLoad = withResource io cleanup testLoadedTree
   where
-    io :: IO (FilePath, Maybe (HNode RawHTMLContent))
     io = do
       dir   <- write
       tree  <- buildTree dir
       return (dir, tree)
-    write :: IO FilePath
     write = do
       dir <- testDirectory
       createFile (dir </> "2_foo.html")                   "<h1>Foo</h1>"
@@ -29,7 +27,6 @@ testTreeLoad = withResource io cleanup testLoadedTree
       createFile (dir </> "1_quux" </> "17_17.html")      "<h1>17</h1>"
       createFile (dir </> "1_quux" </> "index.html")      "<h1>Quux</h1>"
       return dir
-    cleanup :: (FilePath, Maybe (HNode RawHTMLContent)) -> IO ()
     cleanup = removeDirectoryRecursive . fst
 
 conTest :: HNode RawHTMLContent -> String -> String

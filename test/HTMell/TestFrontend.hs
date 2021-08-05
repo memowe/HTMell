@@ -14,17 +14,14 @@ import System.Directory ( removeDirectoryRecursive )
 
 testFrontend = withResource io cleanup testLoadedFrontend
   where
-    io :: IO (FilePath, Maybe (HNode MarkdownContent))
     io = do
       dir     <- write
       htmell  <- loadHTMell dir
       return (dir, htmell)
-    write :: IO FilePath
     write = do
       dir <- testDirectory
       createFile (dir </> "foo.md") "# Foo"
       return dir
-    cleanup :: (FilePath, Maybe (HNode MarkdownContent)) -> IO ()
     cleanup = removeDirectoryRecursive . fst
 
 testLoadedFrontend dirIO = testGroup "HTMell frontend tests"

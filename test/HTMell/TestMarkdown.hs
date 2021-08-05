@@ -26,7 +26,6 @@ testMarkdownExtraction = testGroup "Content extraction"
 
 testMarkdownLoading = withResource io cleanup test
   where
-    test :: IO (FilePath, Maybe MarkdownContent) -> TestTree
     test mdIO = testCase "Filesystem loading" $ do
       mc <- fromJust . snd <$> mdIO
       mc @?= readMarkdown source

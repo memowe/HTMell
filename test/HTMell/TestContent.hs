@@ -22,17 +22,14 @@ testRawHTML fileContent = testGroup "Raw HTML Content from file"
 
 testRawHTMLFile = withResource io cleanup testRawHTML
   where
-    io :: IO (FilePath, Maybe RawHTMLContent)
     io = do
       name <- write
-      content <- getContent name
+      content <- getContent name :: IO (Maybe RawHTMLContent)
       return (name, content)
-    write :: IO FilePath
     write = do
       file <- (</> "42_raw.html") <$> testDirectory
       writeFile file "<h1>Hello HTMell</h1>"
       return file
-    cleanup :: (FilePath, Maybe RawHTMLContent) -> IO ()
     cleanup = removeFile . fst
 
 testContent = testGroup "Content tests"
