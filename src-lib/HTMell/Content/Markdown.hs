@@ -22,6 +22,7 @@ import Data.Map ( Map )
 import qualified Data.Text as T
 import Data.Text ( Text )
 import CMark ( commonmarkToHtml )
+import System.FilePath ( takeExtension )
 
 -- | A markdown content value consists of metadata and markdown data. The
 -- 'metadata' is read as "HTMell.Content.Metadata.Frontmatter", the
@@ -41,6 +42,11 @@ instance HTMellContent MarkdownContent where
 readMarkdown :: String -> MarkdownContent
 readMarkdown = uncurry MarkdownContent . splitFrontmatter
 
+isMarkdown :: FilePath -> Bool
+isMarkdown = (== ".md") . takeExtension
+
 -- | Read a 'MarkdownContent' value from a file.
 loadMarkdownContent :: FilePath -> IO (Maybe MarkdownContent)
-loadMarkdownContent path = Just . readMarkdown <$> readFile path
+loadMarkdownContent path
+  | isMarkdown path = Just . readMarkdown <$> readFile path
+  | otherwise       = return Nothing
