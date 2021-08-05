@@ -18,7 +18,7 @@ module HTMell.Content.Metadata.Frontmatter
   , parseFrontmatter
   ) where
 
-import Data.Map ( Map, fromList )
+import Data.Map ( Map, fromList, empty )
 import Data.List ( dropWhile, dropWhileEnd )
 import Text.ParserCombinators.ReadP
   ( char, many, munch, munch1, readP_to_S, skipMany1, string, ReadP )
@@ -75,7 +75,10 @@ readFrontmatter = fst . splitFrontmatter
 -- | Splits the given 'String' in a pair of frontmatter data and the rest,
 -- without separators.
 splitFrontmatter :: String -> (Map String String, String)
-splitFrontmatter = last . parseFrontmatter
+splitFrontmatter md
+  | null parses = (empty, md)
+  | otherwise   = last parses
+  where parses  = parseFrontmatter md
 
 -- | The 'Map' parser, useful for debugging.
 parseFrontmatter :: ReadS (Map String String)
