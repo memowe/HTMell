@@ -19,6 +19,7 @@ library
     HTMell.Tree.Load
     HTMell.Tree.Load.Transformations
     HTMell.Content
+    HTMell.Content.Markdown
     HTMell.Content.Metadata.Frontmatter
     HTMell.Util
   build-depends:
@@ -28,7 +29,8 @@ library
     control-bool,
     filepath,
     directory,
-    text
+    text,
+    cmark
   hs-source-dirs: src-lib
   default-language: Haskell2010
 
@@ -40,6 +42,7 @@ test-suite HTMell-test
     HTMell.TestTreeLoad
     HTMell.TestContent
     HTMell.TestFrontmatter
+    HTMell.TestMarkdown
     HTMell.TestFrontend
     HTMell.TestUtil
     HTMell.Test.Util
