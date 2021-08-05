@@ -5,7 +5,8 @@ import Test.Tasty.HUnit ( (@?=), testCase )
 import HTMell.Test.Util ( createFile, testDirectory )
 import HTMell ( loadHTMell, get, getHTML )
 import HTMell.Tree ( summary, HNode(content) )
-import HTMell.Content ( HTMellContent(toHTML), RawHTMLContent )
+import HTMell.Content ( HTMellContent(..) )
+import HTMell.Content.Markdown ( MarkdownContent(..) )
 import Data.Maybe ( fromJust )
 import qualified Data.Text as T
 import System.FilePath ( (</>) )
@@ -13,7 +14,7 @@ import System.Directory ( removeDirectoryRecursive )
 
 testFrontend = withResource io cleanup testLoadedFrontend
   where
-    io :: IO (FilePath, Maybe (HNode RawHTMLContent))
+    io :: IO (FilePath, Maybe (HNode MarkdownContent))
     io = do
       dir     <- write
       htmell  <- loadHTMell dir
@@ -21,9 +22,9 @@ testFrontend = withResource io cleanup testLoadedFrontend
     write :: IO FilePath
     write = do
       dir <- testDirectory
-      createFile (dir </> "foo.html") "<h1>Foo</h1>"
+      createFile (dir </> "foo.md") "# Foo"
       return dir
-    cleanup :: (FilePath, Maybe (HNode RawHTMLContent)) -> IO ()
+    cleanup :: (FilePath, Maybe (HNode MarkdownContent)) -> IO ()
     cleanup = removeDirectoryRecursive . fst
 
 testLoadedFrontend dirIO = testGroup "HTMell frontend tests"
@@ -34,8 +35,8 @@ testLoadedFrontend dirIO = testGroup "HTMell frontend tests"
       tree <- fromJust . snd <$> dirIO
       let node = fromJust $ get tree "foo"
       let html = toHTML $ fromJust $ content node
-      html @?= T.pack "<h1>Foo</h1>"
+      html @?= T.pack "<h1>Foo</h1>\n"
   , testCase "Get correct HTML via getHTML" $ do
       tree <- fromJust . snd <$> dirIO
-      fromJust (getHTML tree "foo") @?= T.pack "<h1>Foo</h1>"
+      fromJust (getHTML tree "foo") @?= T.pack "<h1>Foo</h1>\n"
   ]

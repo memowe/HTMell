@@ -13,12 +13,14 @@ module HTMell
   -- * Loading a content tree from filesystem
   -- $intro
     loadHTMell
+  , loadHTMellContent
   -- * Accessing single content nodes
   , get
   , getHTML
   ) where
 
 import HTMell.Content ( HTMellContent(..) )
+import HTMell.Content.Markdown ( MarkdownContent )
 import HTMell.Tree ( HNode(..), findHNode )
 import HTMell.Tree.Load ( buildTree )
 import Data.Text ( Text )
@@ -59,20 +61,27 @@ their (optional) ordering numbers:
   because it's loaded from @42_quux.md@ and 42 > 17
 
 The accepted file extensions are the responsibility of the 'HTMellContent'
-instance used. 'HTMell.Content.RawHTMLContent' for example reads @.html@
-files only.
+instance used. The default instance, 'MarkdownContent', accepts @.md@,
+'HTMell.Content.RawHTMLContent' reads @.html@ files only.
 -}
 
--- | Creates a content tree, represented by its root node ('HNode'). This
--- works for any 'HTMellContent' instance, but it needs to be declared:
+-- | Creates a markdown content tree, represented by its root node
+-- ('HNode').
+loadHTMell
+  :: FilePath
+  -- ^ The directory to read the content tree from.
+  -> IO (Maybe (HNode MarkdownContent))
+  -- ^ The loaded content tree, if possible.
+loadHTMell = buildTree
+
+-- | Creates a content tree just like 'loadHTMell', but it works for any
+-- 'HTMellContent' instance, for example 'HTMell.Content.RawHTMLContent'.
+-- The type needs to be declared:
 --
 -- > maybeTree <- loadHTMell "content" :: IO (Maybe (HNode RawHTMLContent))
 -- > let tree = fromJust maybeTree
-loadHTMell
-  :: HTMellContent c
-  => FilePath -- ^ The directory to read the content tree from
-  -> IO (Maybe (HNode c)) -- ^ The content tree ready to use, if possible
-loadHTMell = buildTree
+loadHTMellContent :: HTMellContent c => FilePath -> IO (Maybe (HNode c))
+loadHTMellContent = buildTree
 
 -- | Finds a subtree or leaf (content node) in a given content tree. The
 -- query 'String' consists of child node names, separated with @"\/"@.
