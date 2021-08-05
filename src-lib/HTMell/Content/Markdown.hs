@@ -29,20 +29,17 @@ import CMark ( commonmarkToHtml )
 -- translated to HTML via "CMark" when calling 'toHTML'.
 data MarkdownContent = MarkdownContent
   { meta :: Map String String
-  , html :: Text
+  , markdown :: String
   } deriving (Eq, Show)
 
 instance HTMellContent MarkdownContent where
   getContent  = loadMarkdownContent
   metadata    = meta
-  toHTML      = html
+  toHTML      = commonmarkToHtml [] . T.pack . markdown
 
 -- | Build a 'MarkdownContent' value from a source 'String'.
 readMarkdown :: String -> MarkdownContent
-readMarkdown str = MarkdownContent fm html
-  where
-    (fm, rest)  = splitFrontmatter str
-    html        = commonmarkToHtml [] $ T.pack rest
+readMarkdown = uncurry MarkdownContent . splitFrontmatter
 
 -- | Read a 'MarkdownContent' value from a file.
 loadMarkdownContent :: FilePath -> IO (Maybe MarkdownContent)
