@@ -31,18 +31,14 @@ text-based files (like markdown data), surrounded by @"---"@:
 ---
 front: matter
 answer: 42
-colors:
-  - red
-  - green
-  - blue
+color: blue
 ---
 Rest of the document
 ...
 @
 
 This parser only understands an oversimplified version, with simple
-key-value pairs only, so the list of colors would break. For most use cases
-this should be enough though.
+key-value pairs only. For most use cases this should be enough though.
 -}
 
 trimC x       = dropWhile (==x) . dropWhileEnd (==x)
