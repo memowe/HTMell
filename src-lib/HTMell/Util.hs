@@ -39,16 +39,14 @@ compose = foldr (.) id
 -- Parsing ord and path from file/dir name -----------------------------
 
 ordNum :: ReadP Integer
-ordNum = do
-  num <- read <$> munch1 isDigit
-  char '_'
-  return num
+ordNum = do num <- read <$> munch1 isDigit
+            char '_'
+            return num
 
 ordNodePath :: ReadP (Integer, String)
-ordNodePath = do
-  num   <- option 0 ordNum
-  rest  <- munch1 (/= '.')
-  return (num, rest)
+ordNodePath = do  num   <- option 0 ordNum
+                  rest  <- munch1 (/= '.')
+                  return (num, rest)
 
 -- | Splits a given file or directory name in 'HTMell.Tree.ord' 'Integer'
 -- and name, if it has a leading number, followed by @"_"@. The extension

@@ -29,37 +29,32 @@ buildTree
   :: HTMellContent c
   => FilePath -- ^ The directory to read the content tree from
   -> IO (Maybe (HNode c)) -- ^ The content tree ready to use, if possible
-buildTree path = do
-  rawTree <- loadTree 0 path
-  return $ case rawTree of
-    Just rt -> Just $ process rt
-    _       -> Nothing
-  where
-    process = compose $ processTree <$> reverse
-      -- Tree transformations, composed and applied from top-down
-      [ indexContent
-      , removeIndex
-      , noEmptyLeaves
-      ]
+buildTree path = do rawTree <- loadTree 0 path
+                    return $ case rawTree of
+                      Just rt -> Just $ process rt
+                      _       -> Nothing
+  where process = compose $ processTree <$> reverse
+          -- Tree transformations, composed and applied from top-down
+          [ indexContent
+          , removeIndex
+          , noEmptyLeaves
+          ]
 
 -- Low-level tree-constructing, without transformations
 loadTree :: HTMellContent c => Integer -> FilePath -> IO (Maybe (HNode c))
-loadTree ordNum path = do
-  isFile  <- doesFileExist path
-  isDir   <- doesDirectoryExist path
-  let result  | isFile    = leaf path
-              | isDir     = tree path
-              | otherwise = return Nothing
-  result
-
+loadTree ordNum path = do isFile  <- doesFileExist path
+                          isDir   <- doesDirectoryExist path
+                          let result  | isFile    = leaf path
+                                      | isDir     = tree path
+                                      | otherwise = return Nothing
+                          result
   where
 
     -- Creates a content 'HNode' from a single file
-    leaf path = do
-      content <- getContent path
-      return $ case content of
-        Just c  -> Just $ HNode ordNum M.empty (Just c)
-        _       -> Nothing
+    leaf path = do  content <- getContent path
+                    return $ case content of
+                      Just c  -> Just $ HNode ordNum M.empty (Just c)
+                      _       -> Nothing
 
     -- Creates an inner content tree 'HNode' from a directory
     tree path = do

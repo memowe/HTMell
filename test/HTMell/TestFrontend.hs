@@ -13,16 +13,13 @@ import System.FilePath ( (</>) )
 import System.Directory ( removeDirectoryRecursive )
 
 testFrontend = withResource io cleanup testLoadedFrontend
-  where
-    io = do
-      dir     <- write
-      htmell  <- loadHTMell dir
-      return (dir, htmell)
-    write = do
-      dir <- testDirectory
-      createFile (dir </> "foo.md") "# Foo"
-      return dir
-    cleanup = removeDirectoryRecursive . fst
+  where io      = do  dir     <- write
+                      htmell  <- loadHTMell dir
+                      return (dir, htmell)
+        write   = do  dir <- testDirectory
+                      createFile (dir </> "foo.md") "# Foo"
+                      return dir
+        cleanup = removeDirectoryRecursive . fst
 
 testLoadedFrontend dirIO = testGroup "HTMell frontend tests"
   [ testCase "Correct structure loaded" $ do

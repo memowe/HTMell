@@ -28,6 +28,7 @@ import qualified Data.Map as M
 import Data.Map ( Map, assocs )
 import Data.List ( sortOn, dropWhile, dropWhileEnd, intercalate )
 import Data.List.Split ( splitOn )
+import Data.Function ( on )
 import Control.Monad ( foldM )
 
 -- | The main content tree type, represented by its root node 'HNode'.
@@ -44,7 +45,7 @@ data HNode c = HNode {
 
 -- | 'HNode's are ordered according to their 'ord' numbers.
 instance (Eq c) => Ord (HNode c) where
-  node1 <= node2 = ord node1 <= ord node2
+  (<=) = (<=) `on` ord
 
 -- | All 'children' 'HNode's of the given tree, addressed by their name,
 -- ordered by their 'ord'.
@@ -76,12 +77,10 @@ content
 has the 'summary' @"(foo,bar(quux,baz))"@.
 -}
 summary :: (Eq c) => HNode c -> String
-summary tree
-  | isLeaf tree = ""
-  | otherwise   = "(" ++ toStr tree ++ ")"
-  where
-    toStr       = intercalate "," . map pair . childList
-    pair (k, t) = k ++ summary t
+summary tree  | isLeaf tree = ""
+              | otherwise   = "(" ++ toStr tree ++ ")"
+  where toStr       = intercalate "," . map pair . childList
+        pair (k, t) = k ++ summary t
 
 -- | Bottom-up inside-out processing of a content tree. Each node will be
 -- modified by the given function, possibly changing the tree's
@@ -106,7 +105,6 @@ processTree f node = f (ord node, updatedChildren, content node)
 -- would be selected with @"\/bar\/quux"@.
 findHNode :: HNode c -> String -> Maybe (HNode c)
 findHNode tree = foldM selectChild tree . pathParts
-  where
-    selectChild = flip M.lookup . children
-    pathParts   = splitOn "/" . trimSlashes
-    trimSlashes = dropWhile (== '/') . dropWhileEnd (== '/')
+  where selectChild = flip M.lookup . children
+        pathParts   = splitOn "/" . trimSlashes
+        trimSlashes = dropWhile (== '/') . dropWhileEnd (== '/')

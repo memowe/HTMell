@@ -56,24 +56,22 @@ testChildList = testGroup "Sorted list of children"
   , testCase "Complex tree 'foo/bar' children" $
       childList bar @?= map (\p -> (p, children bar ! p)) ["baz", "quux"]
   ]
-  where
-    foo = children exampleTree ! "foo"
-    bar = children foo ! "bar"
+  where foo = children exampleTree ! "foo"
+        bar = children foo ! "bar"
 
 -- Process example tree in a non-trivial way
 processor ::
   (Integer, Map String (HNode RawHTMLContent), Maybe PseudoContent) ->
   HNode RawHTMLContent
 processor (o, cs, _) = HNode newOrd newChildren newContent
-  where
-    newOrd              = o + 1
-    nonEmptyChildren    = if M.null cs then addAnswer cs else cs
-    newChildren         = withOrdKeys nonEmptyChildren
-    newContent          = Just $ RawHTMLContent $ keysText cs
-    withOrdKeys         = fromList . map addOrdToKey . assocs
-    addOrdToKey (p, n)  = (p ++ show (ord n), n)
-    addAnswer           = insert "answer" (HNode 50 empty Nothing)
-    keysText            = T.pack . unwords . map fst . sortOn snd . assocs
+  where newOrd              = o + 1
+        nonEmptyChildren    = if M.null cs then addAnswer cs else cs
+        newChildren         = withOrdKeys nonEmptyChildren
+        newContent          = Just $ RawHTMLContent $ keysText cs
+        withOrdKeys         = fromList . map addOrdToKey . assocs
+        addOrdToKey (p, n)  = (p ++ show (ord n), n)
+        addAnswer           = insert "answer" (HNode 50 empty Nothing)
+        keysText            = T.pack . unwords . map fst . sortOn snd . assocs
 
 processedTree = processTree processor exampleTree
 

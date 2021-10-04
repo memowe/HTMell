@@ -42,8 +42,7 @@ isRawHTML :: FilePath -> Bool
 isRawHTML = (== ".html") . takeExtension
 
 instance HTMellContent RawHTMLContent where
-  getContent fp
-    | isRawHTML fp  = Just . RawHTMLContent <$> readFile fp
-    | otherwise     = return Nothing
+  getContent fp | isRawHTML fp  = Just . RawHTMLContent <$> readFile fp
+                | otherwise     = return Nothing
   metadata = const empty
   toHTML (RawHTMLContent html) = html

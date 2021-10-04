@@ -50,19 +50,17 @@ separator :: ReadP ()
 separator = do { string "---"; munch (== '-'); newlines; return () }
 
 pair :: ReadP (String, String)
-pair = do
-  key <- trim <$> without "\n:"
-  char ':'
-  value <- trim <$> without "\n"
-  newlines
-  return (key, value)
+pair = do key <- trim <$> without "\n:"
+          char ':'
+          value <- trim <$> without "\n"
+          newlines
+          return (key, value)
 
 frontmatter :: ReadP (Map String String)
-frontmatter = do
-  separator
-  pairs <- many pair
-  separator
-  return $ fromList pairs
+frontmatter = do  separator
+                  pairs <- many pair
+                  separator
+                  return $ fromList pairs
 
 -- | Extracts a 'Map' of frontmatter key-value pairs from the given 'String'
 readFrontmatter :: String -> Map String String
@@ -71,10 +69,9 @@ readFrontmatter = fst . splitFrontmatter
 -- | Splits the given 'String' in a pair of frontmatter data and the rest,
 -- without separators.
 splitFrontmatter :: String -> (Map String String, String)
-splitFrontmatter md
-  | null parses = (empty, md)
-  | otherwise   = last parses
-  where parses  = parseFrontmatter md
+splitFrontmatter md | null parses = (empty, md)
+                    | otherwise   = last parses
+  where parses = parseFrontmatter md
 
 -- | The 'Map' parser, useful for debugging.
 parseFrontmatter :: ReadS (Map String String)

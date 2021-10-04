@@ -96,6 +96,5 @@ get = findHNode
 -- | The same as 'get', but accessing the 'content' of the desired content
 -- node directly.
 getHTML :: HTMellContent c => HNode c -> String -> Maybe Text
-getHTML tree query = do
-  node <- get tree query
-  toHTML <$> content node
+getHTML tree query = do node <- get tree query
+                        toHTML <$> content node

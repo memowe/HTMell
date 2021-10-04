@@ -25,19 +25,17 @@ testMarkdownExtraction = testGroup "Content extraction"
   ]
 
 testMarkdownLoading = withResource io cleanup test
-  where
-    test mdIO = testCase "Filesystem loading" $ do
-      mc <- fromJust . snd <$> mdIO
-      mc @?= readMarkdown source
-    io = do
-      name    <- write
-      content <- getContent name
-      return (name, content)
-    write = do
-      file <- (</> "HTMell-Markdown-Test.md") <$> testDirectory
-      writeFile file source
-      return file
-    cleanup = removeFile . fst
+  where test mdIO = testCase "Filesystem loading" $ do
+          mc <- fromJust . snd <$> mdIO
+          mc @?= readMarkdown source
+        io = do name    <- write
+                content <- getContent name
+                return (name, content)
+        write = do
+          file <- (</> "HTMell-Markdown-Test.md") <$> testDirectory
+          writeFile file source
+          return file
+        cleanup = removeFile . fst
 
 testMarkdown = testGroup "Markdown tests"
   [ testMarkdownExtraction
