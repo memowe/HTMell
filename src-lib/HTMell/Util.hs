@@ -10,7 +10,8 @@ Useful utility functions.
 module HTMell.Util
   (
   -- * Content trees
-    splitNodePath
+    pathParts
+  , splitNodePath
   -- * Content
   , PseudoContent(..)
   , cempty
@@ -20,6 +21,8 @@ module HTMell.Util
 
 import HTMell.Content ( HTMellContent(..) )
 import Data.Char ( isDigit )
+import Data.List ( dropWhile, dropWhileEnd )
+import Data.List.Split ( splitOn )
 import Data.Map ( empty )
 import qualified Data.Text as T
 import Text.ParserCombinators.ReadP ( ReadP, char, munch1, option, readP_to_S )
@@ -35,6 +38,15 @@ import Text.ParserCombinators.ReadP ( ReadP, char, munch1, option, readP_to_S )
 -- \]
 compose :: [a -> a] -> (a -> a)
 compose = foldr (.) id
+
+-- Path part handling
+
+-- | Splits a given content address string in its single path parts.
+--
+-- prop> pathParts "/foo/bar/baz" == ["foo", "bar", "baz"]
+pathParts :: String -> [String]
+pathParts = splitOn "/" . trimSlashes
+  where trimSlashes = dropWhile (== '/') . dropWhileEnd (== '/')
 
 -- Parsing ord and path from file/dir name -----------------------------
 

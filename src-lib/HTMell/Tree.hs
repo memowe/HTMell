@@ -26,10 +26,10 @@ module HTMell.Tree
 
 import qualified Data.Map as M
 import Data.Map ( Map, assocs )
-import Data.List ( sortOn, dropWhile, dropWhileEnd, intercalate )
-import Data.List.Split ( splitOn )
+import Data.List ( sortOn, intercalate )
 import Data.Function ( on )
 import Control.Monad ( foldM )
+import HTMell.Util ( pathParts )
 
 -- | The main content tree type, represented by its root node 'HNode'.
 data HNode c = HNode {
@@ -106,5 +106,3 @@ processTree f node = f (ord node, updatedChildren, content node)
 findHNode :: HNode c -> String -> Maybe (HNode c)
 findHNode tree = foldM selectChild tree . pathParts
   where selectChild = flip M.lookup . children
-        pathParts   = splitOn "/" . trimSlashes
-        trimSlashes = dropWhile (== '/') . dropWhileEnd (== '/')
