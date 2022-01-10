@@ -21,7 +21,6 @@ module HTMell.Util
 
 import HTMell.Content ( HTMellContent(..) )
 import Data.Char ( isDigit )
-import Data.List ( dropWhile, dropWhileEnd )
 import Data.List.Split ( splitOn )
 import Data.Map ( empty )
 import qualified Data.Text as T
@@ -45,8 +44,7 @@ compose = foldr (.) id
 --
 -- prop> pathParts "/foo/bar/baz" == ["foo", "bar", "baz"]
 pathParts :: String -> [String]
-pathParts = splitOn "/" . trimSlashes
-  where trimSlashes = dropWhile (== '/') . dropWhileEnd (== '/')
+pathParts = filter (not . null) . splitOn "/"
 
 -- Parsing ord and path from file/dir name -----------------------------
 

@@ -100,8 +100,8 @@ a @?=| b = summary (fromJust a) @?= b
 testFindHNode = testGroup "Find HNodes"
   [ testCase "Empty tree" $
       findHNode trivialTree "foo" @?= Nothing
-  , testCase "Empty query" $
-      findHNode childTree "" @?= Nothing
+  , testCase "Empty query: root node" $
+      findHNode childTree "" @?= Just childTree
   , testCase "Direct child" $
       findHNode childTree "foo" @?= Just (HNode 42 empty cempty)
   , testCase "Complex subtree query" $
