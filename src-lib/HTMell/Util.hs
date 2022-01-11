@@ -46,18 +46,6 @@ compose = foldr (.) id
 pathParts :: String -> [String]
 pathParts = filter (not . null) . splitOn "/"
 
--- Parsing ord and path from file/dir name -----------------------------
-
-ordNum :: ReadP Integer
-ordNum = do num <- read <$> munch1 isDigit
-            char '_'
-            return num
-
-ordNodePath :: ReadP (Integer, String)
-ordNodePath = do  num   <- option 0 ordNum
-                  rest  <- munch1 (/= '.')
-                  return (num, rest)
-
 -- | Splits a given file or directory name in 'HTMell.Tree.ord' 'Integer'
 -- and name, if it has a leading number, followed by @"_"@. The extension
 -- is stripped.
@@ -66,6 +54,12 @@ ordNodePath = do  num   <- option 0 ordNum
 -- prop> splitNodePath "foo" == (0, "foo")
 splitNodePath :: String -> (Integer, String)
 splitNodePath = fst . head . readP_to_S ordNodePath
+  where ordNodePath = do  num   <- option 0 ordNum
+                          rest  <- munch1 (/= '.')
+                          return (num, rest)
+        ordNum      = do  num   <- read <$> munch1 isDigit
+                          char  '_'
+                          return num
 
 -- Pseudo/Empty content instance, useful for testing -------------------
 
