@@ -1,3 +1,4 @@
+{-# LANGUAGE TupleSections #-}
 {-|
 Module      : HTMell.Tree.Load
 Description : Content tree loading
@@ -52,9 +53,7 @@ loadTree ordNum path = do isFile  <- doesFileExist path
 
     -- Creates a content 'HNode' from a single file
     leaf path = do  content <- getContent path
-                    return $ case content of
-                      Just c  -> Just $ HNode ordNum M.empty (Just c)
-                      _       -> Nothing
+                    return $ HNode ordNum M.empty . Just <$> content
 
     -- Creates an inner content tree 'HNode' from a directory
     tree path = do
@@ -67,6 +66,4 @@ loadTree ordNum path = do isFile  <- doesFileExist path
     childPair (rawPath, filePath) = do
       let (ordNum, path) = splitNodePath rawPath
       child <- loadTree ordNum filePath
-      return $ case child of
-        Just child  -> Just (path, child)
-        _           -> Nothing
+      return $ (path,) <$> child
