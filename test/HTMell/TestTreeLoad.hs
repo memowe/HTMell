@@ -3,7 +3,7 @@ module HTMell.TestTreeLoad ( testTreeLoad ) where
 import Test.Tasty ( withResource, testGroup, TestTree )
 import Test.Tasty.HUnit ( testCase, (@?=) )
 import HTMell.Test.Util ( testDirectory, createFile )
-import HTMell.Tree ( HNode(..), summary, findHNode )
+import HTMell.Tree ( HTree, content, summary, findNode )
 import HTMell.Tree.Load ( buildTree )
 import HTMell.Content ( HTMellContent(..), RawHTMLContent(..) )
 import Data.Maybe ( fromJust )
@@ -27,12 +27,12 @@ testTreeLoad = withResource io cleanup testLoadedTree
           return dir
         cleanup = removeDirectoryRecursive . fst
 
-conTest :: HNode RawHTMLContent -> String -> String
+conTest :: HTree RawHTMLContent -> String -> String
 conTest tree path = T.unpack html
-  where node = fromJust $ findHNode tree path
+  where node = fromJust $ findNode tree path
         html = toHTML $ fromJust $ content node
 
-testLoadedTree :: IO (FilePath, Maybe (HNode RawHTMLContent)) -> TestTree
+testLoadedTree :: IO (FilePath, Maybe (HTree RawHTMLContent)) -> TestTree
 testLoadedTree dirIO = testGroup "Content tree loading tests"
   [ testCase "Correct structure" $ do
       tree <- fromJust . snd <$> dirIO
@@ -48,8 +48,8 @@ testLoadedTree dirIO = testGroup "Content tree loading tests"
       conTest tree "/quux" @?= "<h1>Quux</h1>"
   , testCase "Inner index node removed" $ do
       tree <- fromJust . snd <$> dirIO
-      findHNode tree "/quux/index" @?= Nothing
+      findNode tree "/quux/index" @?= Nothing
   , testCase "Empty leaf removed" $ do
       tree <- fromJust . snd <$> dirIO
-      findHNode tree "/baz" @?= Nothing
+      findNode tree "/baz" @?= Nothing
   ]
