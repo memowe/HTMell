@@ -10,7 +10,10 @@ HTMell content tree related types and functions.
 module HTMell.Tree
   (
   -- * The content tree type
-    HNode(..)
+    HTree(..)
+  , name
+  , content
+  , children
   -- * Basic tree operations
   , childList
   , isLeaf
@@ -19,45 +22,43 @@ module HTMell.Tree
   , summary
   -- * Content queries
   -- $ContentQueries
-  , findHNode
+  , findNode
   -- * Tree transformation
   , processTree
   ) where
 
-import qualified Data.Map as M
-import Data.Map ( Map, assocs )
-import Data.List ( sortOn, intercalate )
-import Data.Function ( on )
+import Data.List ( intercalate )
+import Data.Tree ( Tree(Node), Forest, subForest )
 import Control.Monad ( foldM )
 import HTMell.Util ( pathParts )
+import GHC.Generics (Constructor(conName))
 
--- | The main content tree type, represented by its root node 'HNode'.
-data HNode c = HNode {
-  ord :: Integer, -- ^ Defines a position within the sequence of sibling
-    -- 'HNode's as 'children' of the parent.
-  children :: Map String (HNode c), -- ^ All children of this 'HNode',
-    -- addressed by their (processed) relative paths inside the filesystem.
-  content :: Maybe c -- ^ Content of this node, read from file contents.
-} deriving
-  ( Eq -- ^ Default 'Eq' instance.
-  , Show -- ^ Default 'Show' instance.
-  )
+-- | The main content tree type, having pairs of name and content as nodes
+type HTree c = Tree (String, Maybe c)
 
--- | 'HNode's are ordered according to their 'ord' numbers.
-instance (Eq c) => Ord (HNode c) where
-  (<=) = (<=) `on` ord
+-- | The name of a 'HTree' node
+name :: HTree c -> String
+name (Node (n, _) _) = n
 
--- | All 'children' 'HNode's of the given tree, addressed by their name,
--- ordered by their 'ord'.
-childList :: (Eq c) => HNode c -> [(String, HNode c)]
-childList = sortOn snd . assocs . children
+-- | The content of a 'HTree' node
+content :: HTree c -> Maybe c
+content (Node (_, c) _) = c
 
--- | True /iff/ the given 'HNode' has no 'children'.
-isLeaf :: HNode c -> Bool
-isLeaf = M.null . children
+-- | The children 'subForest' of a 'HTree' node
+children :: Tree c -> Forest c
+children = subForest
 
--- | True /iff/ the given 'HNode' has 'children'.
-isInnerNode :: HNode c -> Bool
+-- | All child nodes of the given tree, addressed by their name
+childList :: HTree c -> [(String, HTree c)]
+childList = map decorateName . children
+  where decorateName = (,) =<< name
+
+-- | True /iff/ the given 'HTree' node has no children.
+isLeaf :: HTree c -> Bool
+isLeaf = null . childList
+
+-- | True /iff/ the given 'HTree' node has children.
+isInnerNode :: HTree c -> Bool
 isInnerNode = not . isLeaf
 
 {-|
@@ -76,7 +77,7 @@ content
 
 has the 'summary' @"(foo,bar(quux,baz))"@.
 -}
-summary :: (Eq c) => HNode c -> String
+summary :: HTree c -> String
 summary tree  | isLeaf tree = ""
               | otherwise   = "(" ++ toStr tree ++ ")"
   where toStr       = intercalate "," . map pair . childList
@@ -86,23 +87,23 @@ summary tree  | isLeaf tree = ""
 -- modified by the given function, possibly changing the tree's
 -- 'HTMell.Content.HTMellContent' instance.
 processTree
-  :: ((Integer, Map String (HNode b), Maybe a) -> HNode b)
-  -- ^ A function that /modifies/ a given deconstructed 'HNode', represented
-  -- by a triple of an 'Integer' ('ord'), a 'Map' ('children') and a
-  -- @'Maybe' a@ ('content'). The /children/ are already modified by
+  :: (String -> Maybe a -> [HTree b] -> HTree b)
+  -- ^ A function that /modifies/ a given deconstructed 'HTree', represented
+  -- by the node's name ('String'), its content (@'Maybe' a@) and its child
+  -- nodes as a 'Forest' of trees. The children are already modified by
   -- 'processTree' (/bottom-up/), thus already having the new content type.
-  -> HNode a -- ^ The node to /modify/.
-  -> HNode b -- ^ The /modified/ node.
-processTree f node = f (ord node, updatedChildren, content node)
-  where updatedChildren = processTree f <$> children node
+  -> HTree a -- ^ The tree to /modify/.
+  -> HTree b -- ^ The /modified/ tree.
+processTree f node@(Node (n, c) ch) = f n c updatedCh
+  where updatedCh = processTree f <$> children node
 
 -- $ContentQueries
 -- Refer to "HTMell" for an explanation of how directory and file names
--- correspond to the 'HNode's names in a content tree.
+-- correspond to the 'HTree's names in a content tree.
 
--- | Selects a 'HNode' inside the given tree via its name path, separated
+-- | Selects a node inside the given 'HTree' via its name path, separated
 -- by @"/"@. For example, the @"quux"@ node in the tree above ('summary')
 -- would be selected with @"\/bar\/quux"@.
-findHNode :: HNode c -> String -> Maybe (HNode c)
-findHNode tree = foldM selectChild tree . pathParts
-  where selectChild = flip M.lookup . children
+findNode :: HTree c -> String -> Maybe (HTree c)
+findNode tree = foldM selectChild tree . pathParts
+  where selectChild = flip lookup . childList

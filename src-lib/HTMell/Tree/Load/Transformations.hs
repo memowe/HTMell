@@ -21,13 +21,13 @@ module HTMell.Tree.Load.Transformations
   , noEmptyLeaves
   ) where
 
-import HTMell.Tree ( HNode(..), isLeaf )
-import qualified Data.Map as M
+import Data.List ( find )
 import Data.Maybe ( isNothing )
-import Control.Bool ( notF, (<&&>) )
+import Data.Tree ( Tree(Node) )
+import HTMell.Tree ( HTree, name, content, children, isLeaf )
 
 -- Just a little helper for tree processors that only modify child maps
-childProcess f (o, ch, c) = HNode o (f ch) c
+childProcess f n c ch = Node (n, c) (f ch)
 
 {- $InnerNodeContent
 While a leaf of the content tree gets its content from a file, it is not
@@ -37,16 +37,17 @@ content. @"index"@ children to the rescue!
 __Caveat__: Don't use /directories/ named @"index"@!
 -}
 
--- | Attaches the 'content' of a content tree leaf to its parent 'HNode' if
+-- | Attaches the 'content' of a content tree leaf to its parent 'HTree' if
 -- its 'children' name is @"index"@.
-indexContent (o, ch, c) = HNode o ch $ case c of
-  Nothing -> content =<< M.lookup "index" ch
-  other   -> other
+indexContent n c ch = Node (n, c') ch
+  where c' = case c of
+              Nothing -> content =<< find ((== "index") . name) ch
+              other   -> other
 
 -- | Removes all 'children' named @"index"@.
 removeIndex = childProcess $
-  M.filterWithKey $ const . (/= "index")
+  filter ((/= "index") . name)
 
 -- | Removes content tree leaves with @Nothing@ as their 'content'.
 noEmptyLeaves = childProcess $
-  M.filter $ notF $ isLeaf <&&> isNothing . content
+  filter (not . ((&&) <$> isLeaf <*> isNothing . content))

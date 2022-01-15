@@ -2,42 +2,45 @@ module HTMell.TestTree ( testTree ) where
 
 import Test.Tasty ( testGroup )
 import Test.Tasty.HUnit ( testCase, (@?=) )
-import HTMell.Tree ( HNode(..), isLeaf, isInnerNode, childList, summary, processTree, findHNode )
-import HTMell.Content ( RawHTMLContent(..), toHTML )
+import HTMell.Tree ( HTree(..), name, content, children, isLeaf, isInnerNode, childList, summary, processTree, findNode )
+import HTMell.Content ( RawHTMLContent (RawHTMLContent), toHTML )
 import HTMell.Util ( cempty, PseudoContent(..) )
-import qualified Data.Map as M
-import Data.Map ( Map, empty, null, (!), fromList, insert, assocs )
 import Data.Maybe ( isNothing, fromJust )
 import Data.List ( sortOn )
+import Data.Tree ( Tree(Node) )
 import qualified Data.Text as T
 import Data.Text ( Text, pack )
 
-trivialTree = HNode 42 empty cempty
-childTree   = HNode 17 (fromList [("foo", HNode 42 empty cempty)]) cempty
-exampleTree = HNode 17 (fromList
-  [ ("foo", HNode 42 (fromList
-    [ ("bar", HNode 37 (fromList
-      [ ("baz", HNode 108 empty cempty)
-      , ("quux", HNode 109 empty cempty)
-      ]) cempty)
-    , ("bidu", HNode 25 empty cempty)
-    ]) cempty)
-  , ("xnorfzt", HNode 666 empty cempty)
-  ]) cempty
+trivialTree :: HTree PseudoContent
+trivialTree = Node ("", Nothing) []
+childTree   = Node ("", cempty) [Node ("foo", cempty) []]
+exampleTree = Node ("", cempty)
+  [ Node ("foo", cempty)
+    [ Node ("bidu", cempty) []
+    , Node ("bar", cempty)
+      [ Node ("baz", cempty) []
+      , Node ("quux", cempty) []
+      ]
+    ]
+  , Node ("xnorfzt", cempty) []
+  ]
+
+etFoo     = head        $ children exampleTree
+etBidu    = head        $ children etFoo
+etBar     = head $ tail $ children etFoo
+etBaz     = head        $ children etBar
+etQuux    = head $ tail $ children etBar
+etXnorfzt = head $ tail $ children exampleTree
 
 testLeaf = testGroup "Leaf/Inner node"
   [ testCase "Empty tree leaf" $ isLeaf trivialTree @?= True
   , testCase "Empty tree inner node" $ isInnerNode trivialTree @?= False
   , testCase "Single child leaf" $ isLeaf childTree @?= False
   , testCase "Single child inner node" $ isInnerNode childTree @?= True
-  , testCase "Complex tree leaf is leaf" $
-      isLeaf (fromJust $ findHNode exampleTree "foo/bar/baz") @?= True
-  , testCase "Complex tree leaf is not inner node" $
-      isInnerNode (fromJust $ findHNode exampleTree "foo/bar/baz") @?= False
-  , testCase "Complex tree inner node is not leaf" $
-      isLeaf (fromJust $ findHNode exampleTree "foo/bar") @?= False
-  , testCase "Complex tree inner node is inner node" $
-      isInnerNode (fromJust $ findHNode exampleTree "foo/bar") @?= True
+  , testCase "Complex tree leaf is leaf" $ isLeaf etBaz @?= True
+  , testCase "Complex tree leaf is not inner node" $ isInnerNode etBaz @?= False
+  , testCase "Complex tree inner node is not leaf" $ isLeaf etBar @?= False
+  , testCase "Complex tree inner node is inner node" $ isInnerNode etBar @?= True
   ]
 
 testSummary = testGroup "Tree summary"
@@ -47,67 +50,65 @@ testSummary = testGroup "Tree summary"
       summary exampleTree @?= "(foo(bidu,bar(baz,quux)),xnorfzt)"
   ]
 
-testChildList = testGroup "Sorted list of children"
+testChildList = testGroup "List of children"
   [ testCase "Empty tree" $ childList trivialTree @?= []
   , testCase "Single child" $
-      childList childTree @?= [("foo", children childTree ! "foo")]
+      childList childTree @?= [("foo", Node ("foo", cempty) [])]
   , testCase "Complex tree 'foo' children" $
-      childList foo @?= map (\p -> (p, children foo ! p)) ["bidu", "bar"]
+      childList etFoo @?= [("bidu", etBidu), ("bar", etBar)]
   , testCase "Complex tree 'foo/bar' children" $
-      childList bar @?= map (\p -> (p, children bar ! p)) ["baz", "quux"]
+      childList etBar @?= [("baz", etBaz), ("quux", etQuux)]
   ]
-  where foo = children exampleTree ! "foo"
-        bar = children foo ! "bar"
 
 -- Process example tree in a non-trivial way
-processor ::
-  (Integer, Map String (HNode RawHTMLContent), Maybe PseudoContent) ->
-  HNode RawHTMLContent
-processor (o, cs, _) = HNode newOrd newChildren newContent
-  where newOrd              = o + 1
-        nonEmptyChildren    = if M.null cs then addAnswer cs else cs
-        newChildren         = withOrdKeys nonEmptyChildren
-        newContent          = Just $ RawHTMLContent $ keysText cs
-        withOrdKeys         = fromList . map addOrdToKey . assocs
-        addOrdToKey (p, n)  = (p ++ show (ord n), n)
-        addAnswer           = insert "answer" (HNode 50 empty Nothing)
-        keysText            = T.pack . unwords . map fst . sortOn snd . assocs
+processor
+  :: String -> Maybe PseudoContent -> [HTree RawHTMLContent]
+  -> HTree RawHTMLContent
+processor n _ cs = Node (newName, Just newContent) newChs
+  where newName     = reverse n ++ show (length cs)
+        newContent  = RawHTMLContent $ T.pack $ unwords chNames
+        chNames     = map name cs
+        newChs      = if null cs then [answer] else reverse cs
+        answer      = Node ("42", Just $ RawHTMLContent $ T.pack "answer") []
 
 processedTree = processTree processor exampleTree
 
 testTreeProcessing = testGroup "Tree processing"
   [ testCase "Correct structure" $ summary processedTree @?= "\
-    \(foo43\
-      \(bidu26(answer50)\
-      \,bar38\
-        \(baz109(answer50)\
-        \,quux110(answer50)\
+    \(tzfronx0(42)\
+    \,oof2\
+      \(rab2\
+        \(xuuq0(42)\
+        \,zab0(42)\
         \)\
+      \,udib0(42)\
       \)\
-    \,xnorfzt667(answer50)\
     \)"
   , testCase "Root foo content" $
-      toHTML (fromJust $ content $ fromJust $ findHNode processedTree "foo43")
-        @?= T.pack "bidu bar"
+      toHTML (fromJust $ content $ fromJust $ findNode processedTree "oof2")
+        @?= T.pack "udib0 rab2"
   , testCase "Root foo/bar content" $
-      toHTML (fromJust $ content $ fromJust $ findHNode processedTree "foo43/bar38")
-        @?= T.pack "baz quux"
+      toHTML (fromJust $ content $ fromJust $ findNode processedTree "oof2/rab2")
+        @?= T.pack "zab0 xuuq0"
+  , testCase "Empty xnorfzt content" $
+      toHTML (fromJust $ content $ fromJust $ findNode processedTree "tzfronx0/42")
+        @?= T.pack "answer"
   ]
 
--- Helper operator for simplified summary testing of HNodes
+-- Helper operator for simplified summary testing of HTrees
 a @?=| b = summary (fromJust a) @?= b
 
-testFindHNode = testGroup "Find HNodes"
+testFindNode = testGroup "Find HTrees"
   [ testCase "Empty tree" $
-      findHNode trivialTree "foo" @?= Nothing
+      findNode trivialTree "foo" @?= Nothing
   , testCase "Empty query: root node" $
-      findHNode childTree "" @?= Just childTree
+      findNode childTree "" @?= Just childTree
   , testCase "Direct child" $
-      findHNode childTree "foo" @?= Just (HNode 42 empty cempty)
+      findNode childTree "foo" @?= Just (Node ("foo", cempty) [])
   , testCase "Complex subtree query" $
-      findHNode exampleTree "foo/bar" @?=| "(baz,quux)"
+      findNode exampleTree "foo/bar" @?=| "(baz,quux)"
   , testCase "Complex leaf query" $
-      findHNode exampleTree "foo/bar/quux" @?=| ""
+      findNode exampleTree "foo/bar/quux" @?=| ""
   ]
 
 testTree = testGroup "Content tree tests"
@@ -115,5 +116,5 @@ testTree = testGroup "Content tree tests"
   , testSummary
   , testChildList
   , testTreeProcessing
-  , testFindHNode
+  , testFindNode
   ]
