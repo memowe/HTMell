@@ -21,7 +21,7 @@ import Data.Text ( Text )
 import Prelude hiding ( readFile )
 import Data.Text.IO ( readFile )
 
--- | Content stored in 'HTMell.Tree.HNode' trees. Instances must provide
+-- | Content stored in 'HTMell.Tree.HTree' trees. Instances must provide
 -- a function to read content from filesystem and extract metadata and HTML
 -- from a content value.
 class HTMellContent c where

@@ -21,7 +21,7 @@ module HTMell
 
 import HTMell.Content ( HTMellContent(..) )
 import HTMell.Content.Markdown ( MarkdownContent )
-import HTMell.Tree ( HNode(..), findHNode )
+import HTMell.Tree ( HTree(..), content, findNode )
 import HTMell.Tree.Load ( buildTree )
 import Data.Text ( Text )
 
@@ -65,12 +65,11 @@ instance used. The default instance, 'MarkdownContent', accepts @.md@,
 'HTMell.Content.RawHTMLContent' reads @.html@ files only.
 -}
 
--- | Creates a markdown content tree, represented by its root node
--- ('HNode').
+-- | Creates a markdown content tree
 loadHTMell
   :: FilePath
   -- ^ The directory to read the content tree from.
-  -> IO (Maybe (HNode MarkdownContent))
+  -> IO (Maybe (HTree MarkdownContent))
   -- ^ The loaded content tree, if possible.
 loadHTMell = buildTree
 
@@ -78,9 +77,9 @@ loadHTMell = buildTree
 -- 'HTMellContent' instance, for example 'HTMell.Content.RawHTMLContent'.
 -- The type needs to be declared:
 --
--- > maybeTree <- loadHTMell "content" :: IO (Maybe (HNode RawHTMLContent))
+-- > maybeTree <- loadHTMell "content" :: IO (Maybe (HTree RawHTMLContent))
 -- > let tree = fromJust maybeTree
-loadHTMellContent :: HTMellContent c => FilePath -> IO (Maybe (HNode c))
+loadHTMellContent :: HTMellContent c => FilePath -> IO (Maybe (HTree c))
 loadHTMellContent = buildTree
 
 -- | Finds a subtree or leaf (content node) in a given content tree. The
@@ -88,13 +87,13 @@ loadHTMellContent = buildTree
 -- See 'loadHTMell' for details of node names.
 get
   :: HTMellContent c
-  => HNode c -- ^ The content tree to search in
+  => HTree c -- ^ The content tree to search in
   -> String -- ^ A query string of the desired subtree or content node
-  -> Maybe (HNode c) -- ^ The desired content node, if it exists
-get = findHNode
+  -> Maybe (HTree c) -- ^ The desired content node, if it exists
+get = findNode
 
 -- | The same as 'get', but accessing the 'content' of the desired content
 -- node directly.
-getHTML :: HTMellContent c => HNode c -> String -> Maybe Text
+getHTML :: HTMellContent c => HTree c -> String -> Maybe Text
 getHTML tree query = do node <- get tree query
                         toHTML <$> content node
