@@ -1,7 +1,7 @@
 {-|
 Module      : HTMell.Tree.Load.Transformations
 Description : Content tree transformations
-Copyright   : (c) 2021 Mirko Westermeier
+Copyright   : (c) 2021-2022 Mirko Westermeier
 License     : MIT
 
 This module is a collection of all tree modifications used in

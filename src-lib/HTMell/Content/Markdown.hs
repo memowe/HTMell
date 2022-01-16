@@ -1,7 +1,7 @@
 {-|
 Module      : HTMell.Content.Markdown
 Description : HTMell markdown content
-Copyright   : (c) 2021 Mirko Westermeier
+Copyright   : (c) 2021-2022 Mirko Westermeier
 License     : MIT
 
 Loading HTMell content from markdown files

@@ -2,7 +2,7 @@
 {-|
 Module      : HTMell.Tree.Load
 Description : Content tree loading
-Copyright   : (c) 2021 Mirko Westermeier
+Copyright   : (c) 2021-2022 Mirko Westermeier
 License     : MIT
 
 This module creates content trees - represented by their root 'HTree' - from

@@ -1,7 +1,7 @@
 {-|
 Module      : HTMell.Tree
 Description : Content tree related types and functions
-Copyright   : (c) 2021 Mirko Westermeier
+Copyright   : (c) 2021-2022 Mirko Westermeier
 License     : MIT
 
 HTMell content tree related types and functions.

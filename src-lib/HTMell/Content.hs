@@ -1,7 +1,7 @@
 {-|
 Module      : HTMell.Content
 Description : HTMell content
-Copyright   : (c) 2021 Mirko Westermeier
+Copyright   : (c) 2021-2022 Mirko Westermeier
 License     : MIT
 
 HTMell content related types and functions

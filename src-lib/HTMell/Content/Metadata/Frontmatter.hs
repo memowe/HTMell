@@ -1,7 +1,7 @@
 {-|
 Module      : HTMell.Content.Metadata.Frontmatter
 Description : Oversimplified frontmatter parser
-Copyright   : (c) 2021 Mirko Westermeier
+Copyright   : (c) 2021-2022 Mirko Westermeier
 License     : MIT
 
 A parser for over-simplified frontmatter metadata
