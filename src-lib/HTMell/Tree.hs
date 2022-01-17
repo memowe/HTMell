@@ -20,6 +20,7 @@ module HTMell.Tree
   , isInnerNode
   -- * String representation
   , summary
+  , drawHTree
   -- * Content queries
   -- $ContentQueries
   , findNode
@@ -28,7 +29,7 @@ module HTMell.Tree
   ) where
 
 import Data.List ( intercalate )
-import Data.Tree ( Tree(Node), Forest, subForest )
+import Data.Tree ( Tree(Node), Forest, subForest, drawTree )
 import Control.Monad ( foldM )
 import HTMell.Util ( pathParts )
 import GHC.Generics (Constructor(conName))
@@ -82,6 +83,10 @@ summary tree  | isLeaf tree = ""
               | otherwise   = "(" ++ toStr tree ++ ")"
   where toStr       = intercalate "," . map pair . childList
         pair (k, t) = k ++ summary t
+
+-- | 2-dimensional ASCII drawing of the given 'HTree', based on 'drawTree'.
+drawHTree :: HTree c -> String
+drawHTree = drawTree . fmap fst
 
 -- | Bottom-up inside-out processing of a content tree. Each node will be
 -- modified by the given function, possibly changing the tree's

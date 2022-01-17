@@ -2,7 +2,7 @@ module HTMell.TestTree ( testTree ) where
 
 import Test.Tasty ( testGroup )
 import Test.Tasty.HUnit ( testCase, (@?=) )
-import HTMell.Tree ( HTree(..), name, content, children, isLeaf, isInnerNode, childList, summary, processTree, findNode )
+import HTMell.Tree ( HTree(..), name, content, children, isLeaf, isInnerNode, childList, summary, drawHTree, processTree, findNode )
 import HTMell.Content ( RawHTMLContent (RawHTMLContent), toHTML )
 import HTMell.Util ( cempty, PseudoContent(..) )
 import Data.Maybe ( isNothing, fromJust )
@@ -49,6 +49,21 @@ testSummary = testGroup "Tree summary"
   , testCase "Complex tree" $
       summary exampleTree @?= "(foo(bidu,bar(baz,quux)),xnorfzt)"
   ]
+
+-- Simple test only as this should be tested in Data.Tree
+testDrawTree = testCase "Tree drawing (Data.Tree)" $ drawHTree exampleTree
+  @?= "|\n\
+      \+- foo\n\
+      \|  |\n\
+      \|  +- bidu\n\
+      \|  |\n\
+      \|  `- bar\n\
+      \|     |\n\
+      \|     +- baz\n\
+      \|     |\n\
+      \|     `- quux\n\
+      \|\n\
+      \`- xnorfzt\n"
 
 testChildList = testGroup "List of children"
   [ testCase "Empty tree" $ childList trivialTree @?= []
@@ -114,6 +129,7 @@ testFindNode = testGroup "Find HTrees"
 testTree = testGroup "Content tree tests"
   [ testLeaf
   , testSummary
+  , testDrawTree
   , testChildList
   , testTreeProcessing
   , testFindNode
